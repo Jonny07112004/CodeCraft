@@ -82,21 +82,28 @@ const MainPage = () => {
     settracki([-1]);
   }
 
-  function insertionSort() {
+  async function insertionSort() {
     let sortedArray = [...arr];
     for (let i = 1; i < sortedArray.length; i++) {
       let key = sortedArray[i];
+      settracki([i]);
+      await delay(1000);
       let j = i - 1;
 
       /* Move elements of arr[0..i-1], that are
          greater than key, to one position ahead
          of their current position */
       while (j >= 0 && sortedArray[j] > key) {
+        settrackj([j]);
+        await delay(1000);
         sortedArray[j + 1] = sortedArray[j];
         j = j - 1;
       }
       sortedArray[j + 1] = key;
+      setarr([...sortedArray]);
     }
+    settrackj([-1]);
+    settracki([-1]);
   }
   const delay = (duration: number | undefined) => {
     return new Promise<void>((resolve) => {
@@ -305,19 +312,9 @@ const MainPage = () => {
             Reset
           </button>
         </div>
-        {/*<div className='flex border-2 border-white w-[40vw] h-1/3 ml-[5vw] mt-[5vh] bg-zinc-900'>
-          <p className='overflow-scroll p-[1vw]'>
-            1. Start with an unsorted array.<br></br>
-            2. Iterate through the array multiple times. Each time, you will compare adjacent elements.<br></br>
-            3. For each pair of adjacent elements:<br></br>
-            3.1 If the first element is larger than the second one, swap them so the smaller element comes first.<br></br>
-            3.2 If the first element is smaller than or equal to the second one, leave them as they are.<br></br>
-            4. Repeat this process for the entire array. After each full pass through the array, the largest unsorted element will "bubble up" to its correct position at the end.<br></br>
-            5. Reduce the range of elements being compared in each pass, as the last elements of the array will already be sorted after each full pass.<br></br>
-            6. If no swaps were made in a full pass, it means the array is fully sorted, and you can stop early.<br></br>
-            7. Continue until the entire array is sorted.<br></br>
-          </p>
-        </div>*/}
+        <div className='flex- border-2 border-white w-[40vw] h-1/3 ml-[5vw] mt-[5vh] bg-zinc-900'>
+          
+        </div>
       </div>
       <div className="flex-col items-center justify-center">
         <div className="flex mx-[5vh] mt-[8vh] border-2 border-white w-[50vw] rounded-sm h-[60vh] items-end justify-center">

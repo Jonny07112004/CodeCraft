@@ -10,10 +10,12 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 import LinkedListVisualization from './animation'
+import LinkedListVisualizer from './animation2'
 const Linked_List = () => {
   return (
     <>
     <LinkedListVisualization/>
+    <LinkedListVisualizer/>
       {/*<div>
         
         <div className="w-full h-screen text-white flex flex-col items-center">
