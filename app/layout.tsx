@@ -16,7 +16,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+      </head>
+      <body className="bg-zinc-950">
+        {children}
+      </body>
     </html>
   );
 }

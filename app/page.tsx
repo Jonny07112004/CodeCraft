@@ -1,13 +1,19 @@
 import Image from "next/image";
 import Link from "next/link";
-import Product from "./components/Product";
+import NavBar from "./component/NavBar/navBar";
+import Intro from "./component/Pages/Intro/Intro";
+import Marque from "./component/Pages/Intro/Marque";
+import MainPage from "./array/page";
+
+
 
 export default function Home() {
   return (
-    <main>
-      <h1>Hello World</h1>
-      <Link href="/user">UserPage</Link>
-      <Product/>
-      </main>
+    <div className="w-full h-screen bg-zinc-950 text-white">
+      <NavBar/>
+      <Intro/>
+      <Marque/>
+      
+    </div>
   );
 }
