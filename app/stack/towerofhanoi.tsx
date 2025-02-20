@@ -135,7 +135,7 @@ const TowerOfHanoi = () => {
           {[...Array(3)].map((_, i) => (
             <mesh key={i} position={[i * 3 - 3, -1, 0]}>
               <cylinderGeometry args={[0.2, 0.2, 3, 32]} />
-              <meshStandardMaterial color="brown" />
+              <meshStandardMaterial color="red" />
             </mesh>
           ))}
 

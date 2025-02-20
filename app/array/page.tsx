@@ -213,108 +213,113 @@ const MainPage = () => {
   }
 
   return (
-    <div className="w-full h-screen text-white flex">
+    <div className="w-full h-screen text-white flex overflow-auto">
       <div className="w-1/2 h-screen flex-col justify-between ">
         <h1 className="text-[3vw] pt-[5vh] px-[5vw] leading-none">
           Array Data Structure
         </h1>
-        <div className="mt-[5vh] mx-[5vw] text-4xl">
-          <DropdownMenu>
-            <DropdownMenuTrigger>Sort</DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuLabel>Sorting in Array</DropdownMenuLabel>
-              <DropdownMenuItem>
-                <button onClick={sortArray}>Bubble Sort</button>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <button onClick={arraySelectionSort}>Selection Sort</button>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <button onClick={insertionSort}>Insertion Sort</button>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <button>Insert at the Between</button>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-        <div className="mt-[5vh] mx-[5vw] text-4xl">
-          <DropdownMenu>
-            <DropdownMenuTrigger>Insert</DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuLabel>Insertion in Array</DropdownMenuLabel>
-              <DropdownMenuItem>
-                <button
-                  onClick={() => {
-                    setarr([]);
-                    setInsert(true);
-                    setSearch(false);
-                  }}
-                >
-                  Insert Data
-                </button>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <button>Insert at the Beginning</button>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <button>Insert at the End</button>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <button>Insert at the Between</button>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-        <div className="mt-[5vh] mx-[5vw] text-4xl">
-          <DropdownMenu>
-            <DropdownMenuTrigger>Search</DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuLabel>Searching in Array</DropdownMenuLabel>
-              <DropdownMenuItem>
-                <button
-                  onClick={() => {
-                    resetArray;
-                    setSearch(true);
-                    setInsert(false);
-                    setBinary(false);
-                  }}
-                >
-                  Traversing in Array
-                </button>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <button
-                  onClick={() => {
-                    setSearch(true);
-                    setInsert(false);
-                    setBinary(true);
-                    setarr(arr.sort());
-                  }}
-                >
-                  Binary Search
-                </button>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <button>Insert at the End</button>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <button>Insert at the Between</button>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-        <div className="mt-[5vh] mx-[5vw] text-4xl">
-          <button
-            onClick={resetArray}
-            className={` ${click && "cursor-not-allowed"} `}
-          >
-            Reset
-          </button>
-        </div>
-        <div className='flex- border-2 border-white w-[40vw] h-1/3 ml-[5vw] mt-[5vh] bg-zinc-900'>
-          
-        </div>
+        <div className="flex flex-row justify-between h-screen">
+  <div className="flex flex-col items-center justify-start">
+    <div className="mt-[5vh] mx-[5vw] text-4xl">
+      <DropdownMenu>
+        <DropdownMenuTrigger>Sort</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuLabel>Sorting in Array</DropdownMenuLabel>
+          <DropdownMenuItem>
+            <button onClick={sortArray}>Bubble Sort</button>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <button onClick={arraySelectionSort}>Selection Sort</button>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <button onClick={insertionSort}>Insertion Sort</button>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <button>Insert at the Between</button>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+    <div className="mt-[5vh] mx-[5vw] text-4xl">
+      <DropdownMenu>
+        <DropdownMenuTrigger>Insert</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuLabel>Insertion in Array</DropdownMenuLabel>
+          <DropdownMenuItem>
+            <button
+              onClick={() => {
+                setarr([]);
+                setInsert(true);
+                setSearch(false);
+              }}
+            >
+              Insert Data
+            </button>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <button>Insert at the Beginning</button>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <button>Insert at the End</button>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <button>Insert at the Between</button>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+    <div className="mt-[5vh] mx-[5vw] text-4xl">
+      <DropdownMenu>
+        <DropdownMenuTrigger>Search</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuLabel>Searching in Array</DropdownMenuLabel>
+          <DropdownMenuItem>
+            <button
+              onClick={() => {
+                resetArray;
+                setSearch(true);
+                setInsert(false);
+                setBinary(false);
+              }}
+            >
+              Traversing in Array
+            </button>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <button
+              onClick={() => {
+                setSearch(true);
+                setInsert(false);
+                setBinary(true);
+                setarr(arr.sort());
+              }}
+            >
+              Binary Search
+            </button>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <button>Insert at the End</button>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <button>Insert at the Between</button>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+    <div className="mt-[5vh] mx-[5vw] text-4xl">
+      <button
+        onClick={resetArray}
+        className={`${click && "cursor-not-allowed"}`}
+      >
+        Reset
+      </button>
+    </div>
+  </div>
+  <div className="flex-row border-2 border-white w-[40vw] h-[40vh] ml-[5vw] mt-[5vh] bg-zinc-900">
+    {/* Content for the box */}
+    
+  </div>
+</div>
       </div>
       <div className="flex-col items-center justify-center">
         <div className="flex mx-[5vh] mt-[8vh] border-2 border-white w-[50vw] rounded-sm h-[60vh] items-end justify-center">
