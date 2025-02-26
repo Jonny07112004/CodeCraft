@@ -1,0 +1,130 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  width: 100vw;
+  background-color: #1a1a1a; /* Black background */
+  color: #ffffff; /* White text */
+}
+
+.heading {
+  text-align: center;
+  width: 100%;
+  font-size: 30px;
+  margin: 2px 0;
+  color: #f8e71c; /* Yellow color for heading */
+}
+
+.sidebarLeft, .sidebarRight {
+  width: 20%;
+  padding: 20px;
+  background-color: #333333; /* Dark gray background */
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  overflow-y: auto;
+  flex-shrink: 0; /* Prevents the sidebar from shrinking */
+}
+
+.algorithmTitle, .stepsTitle, .graphTitle {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #f5a623; /* Orange color for titles */
+  text-align: center;
+}
+
+.algorithmBox {
+  background-color: #444444; /* Darker gray background */
+  padding: 10px;
+  border-radius: 5px;
+  overflow: auto;
+  max-height: calc(100vh - 200px); /* Adjust height dynamically */
+}
+
+.mainContent {
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 1; /* Prevents the main content from shrinking */
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(10, 40px);
+  grid-gap: 5px;
+  margin-bottom: 10px; /* Adjusted margin to bring buttons closer */
+}
+
+.node {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #555555; /* Dark gray border */
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 5px; /* Adjusted margin to bring buttons closer */
+}
+
+.startBtn, .resetBtn {
+  padding: 10px 20px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: #4a90e2; /* Blue color for button */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.startBtn:hover, .resetBtn:hover {
+  background-color: #357ab8; /* Darker blue on hover */
+}
+
+.startBtn:disabled, .resetBtn:disabled {
+  background-color: #888888; /* Gray when disabled */
+  cursor: not-allowed;
+}
+
+.stepsContainer {
+  height: calc(100vh - 100px); /* Adjust height to fit within the container */
+  overflow-y: auto;
+}
+
+.stepsTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.stepsTable th, .stepsTable td {
+  border: 1px solid #555555; /* Dark gray border */
+  padding: 10px;
+  text-align: left;
+}
+
+.stepsTable th {
+  background-color: #444444; /* Darker gray background */
+}
+
+.stepsTable td {
+  background-color: #333333; /* Dark gray background */
+}
+
+.highlight {
+  background-color: #f8e71c; /* Highlight color for current step */
+  color: #000000; /* Black text for highlighted step */
+}
+
+.iterationCount {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 18px;
+  color: #f5a623; /* Orange color for iteration count */
+}

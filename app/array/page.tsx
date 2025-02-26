@@ -5,46 +5,58 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import Link from "next/link";
 import { motion } from "framer-motion"; // For animations
-import { div } from "framer-motion/client";
 
 const MainPage = () => {
-  let [arr, setarr] = useState([34, 22, 13, 66, 32, 50, 56, 88]);
-  let [trackj, settrackj] = useState([-1]);
-  let [tracki, settracki] = useState([-1]);
-  let [trackk, settrackk] = useState([-1]);
+  const [arr, setarr] = useState([34, 22, 13, 66, 32, 50, 56, 88]);
+  const [trackj, settrackj] = useState([-1]);
+  const [tracki, settracki] = useState([-1]);
+  const [trackk, settrackk] = useState([-1]);
   const [isInsert, setInsert] = useState(false);
   const [isSearch, setSearch] = useState(false);
   const [click, setclick] = useState(false);
   const [isBinary, setBinary] = useState(false);
+  const [pseudoCode, setPseudoCode] = useState<string[]>([]);
+  const [currentStep, setCurrentStep] = useState<number>(-1);
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
   async function sortArray() {
-    let sortedArray = [...arr]; // Create a copy of the array
-    let i = 0,
-      j = 0,
-      temp = 0;
+    let sortedArray = [...arr];
+    let i = 0, j = 0, temp = 0;
     setclick(true);
+    setPseudoCode([
+      "for i = 0 to length(arr) - 1",
+      "  for j = i + 1 to length(arr) - 1",
+      "    if arr[i] > arr[j]",
+      "      swap arr[i] and arr[j]",
+      "end for",
+      "end for"
+    ]);
+    setCurrentStep(0);
     for (i = 0; i < sortedArray.length; i++) {
       settracki([i]);
       await delay(1000);
+      setCurrentStep(1);
       for (j = i + 1; j < sortedArray.length; j++) {
         settrackj([j]);
         await delay(1000);
+        setCurrentStep(2);
         if (sortedArray[i] > sortedArray[j]) {
           temp = sortedArray[i];
           sortedArray[i] = sortedArray[j];
           sortedArray[j] = temp;
           setarr(sortedArray);
           await delay(1000);
+          setCurrentStep(3);
         }
       }
+      setCurrentStep(4);
     }
     settrackj([-1]);
     settracki([-1]);
+    setCurrentStep(5);
     setclick(false);
   }
 
@@ -52,59 +64,81 @@ const MainPage = () => {
     let sortedArray = [...arr];
     let n = sortedArray.length;
     setclick(true);
+    setPseudoCode([
+      "for i = 0 to length(arr) - 2",
+      "  min_idx = i",
+      "  for j = i + 1 to length(arr) - 1",
+      "    if arr[j] < arr[min_idx]",
+      "      min_idx = j",
+      "  end for",
+      "  swap arr[i] and arr[min_idx]",
+      "end for"
+    ]);
+    setCurrentStep(0);
     for (let i = 0; i < n - 1; i++) {
-      // Assume the current position holds
-      // the minimum element
       let min_idx = i;
       settracki([i]);
       await delay(1000);
-      // Iterate through the unsorted portion
-      // to find the actual minimum
+      setCurrentStep(1);
       for (let j = i + 1; j < n; j++) {
         if (sortedArray[j] < sortedArray[min_idx]) {
-          // Update min_idx if a smaller element is found
           min_idx = j;
           settrackj([j]);
           await delay(1000);
+          setCurrentStep(2);
         }
       }
-
-      // Move minimum element to its
-      // correct position
+      setCurrentStep(3);
       let temp = sortedArray[i];
       sortedArray[i] = sortedArray[min_idx];
       sortedArray[min_idx] = temp;
       await delay(1000);
       setarr(sortedArray);
-      setclick(false);
+      setCurrentStep(4);
     }
     settrackj([-1]);
     settracki([-1]);
+    setCurrentStep(5);
+    setclick(false);
   }
 
   async function insertionSort() {
     let sortedArray = [...arr];
+    setPseudoCode([
+      "for i = 1 to length(arr) - 1",
+      "  key = arr[i]",
+      "  j = i - 1",
+      "  while j >= 0 and arr[j] > key",
+      "    arr[j + 1] = arr[j]",
+      "    j = j - 1",
+      "  end while",
+      "  arr[j + 1] = key",
+      "end for"
+    ]);
+    setCurrentStep(0);
     for (let i = 1; i < sortedArray.length; i++) {
       let key = sortedArray[i];
       settracki([i]);
       await delay(1000);
+      setCurrentStep(1);
       let j = i - 1;
-
-      /* Move elements of arr[0..i-1], that are
-         greater than key, to one position ahead
-         of their current position */
+      setCurrentStep(2);
       while (j >= 0 && sortedArray[j] > key) {
         settrackj([j]);
         await delay(1000);
+        setCurrentStep(3);
         sortedArray[j + 1] = sortedArray[j];
         j = j - 1;
       }
       sortedArray[j + 1] = key;
       setarr([...sortedArray]);
+      setCurrentStep(4);
     }
     settrackj([-1]);
     settracki([-1]);
+    setCurrentStep(5);
   }
+
   const delay = (duration: number | undefined) => {
     return new Promise<void>((resolve) => {
       setTimeout(() => {
@@ -124,32 +158,23 @@ const MainPage = () => {
     for (let i = 0; i < 8; i++) {
       reArray.push(Math.floor(Math.random() * (95 - 10 + 1)) + 10);
     }
-
     setarr(reArray);
   };
 
   const addElement = () => {
-    const inputElement = document.getElementById(
-      "arrayelement"
-    ) as HTMLInputElement;
-
-    const inputValue = Number(inputElement.value); // Convert input to a number
-
+    const inputElement = document.getElementById("arrayelement") as HTMLInputElement;
+    const inputValue = Number(inputElement.value);
     if (arr.length < 10 && inputValue !== 0) {
-      // Limit to 10 elements and check for non-zero values
-      setarr([...arr, inputValue]); // Append the new value
-      console.log(arr);
+      setarr([...arr, inputValue]);
     } else {
       alert("Array can only hold 10 elements or non-zero input is required.");
     }
-    inputElement.value = ""; // Clear input after adding
+    inputElement.value = "";
   };
 
   const inputFunc = () => {
-    const inputElement = document.getElementById(
-      "arrayelement"
-    ) as HTMLInputElement;
-    const inputValue = Number(inputElement.value); // Convert input to a number
+    const inputElement = document.getElementById("arrayelement") as HTMLInputElement;
+    const inputValue = Number(inputElement.value);
     inputElement.value = "";
     return inputValue;
   };
@@ -158,291 +183,214 @@ const MainPage = () => {
     let i, j;
     let data = inputFunc();
     let sortedArray = [...arr];
+    setPseudoCode([
+      "for i = 0 to length(arr) - 1",
+      "  if arr[i] == data",
+      "    return i",
+      "  end if",
+      "end for",
+      "return -1"
+    ]);
+    setCurrentStep(0);
     if (isSearch) {
       for (i = 0; i < sortedArray.length; i++) {
         settracki([i]);
         await delay(1000);
+        setCurrentStep(1);
         if (data === sortedArray[i]) {
           settrackk([i]);
           await delay(1000);
           j = 1;
           break;
         }
+        setCurrentStep(2);
         if (j === 1) alert("Not Found The Element");
       }
       settracki([-1]);
+      setCurrentStep(3);
     }
   }
 
   async function binarySearch() {
-    let sortedArray = [...arr]; // Ensure the array is sorted
+    let sortedArray = [...arr].sort((a, b) => a - b);
     let left = 0;
     let right = sortedArray.length - 1;
-    let target = inputFunc(); // Get the target value
+    let target = inputFunc();
+    setPseudoCode([
+      "left = 0, right = length(arr) - 1",
+      "while left <= right",
+      "  mid = (left + right) / 2",
+      "  if arr[mid] == target",
+      "    return mid",
+      "  else if arr[mid] < target",
+      "    left = mid + 1",
+      "  else",
+      "    right = mid - 1",
+      "  end if",
+      "end while",
+      "return -1"
+    ]);
+    setCurrentStep(0);
     settracki([left]);
     settrackj([right]);
     await delay(500);
+    setCurrentStep(1);
     while (left <= right) {
-      // Calculate the middle index
       const middle = Math.floor((left + right) / 2);
       settrackk([middle]);
       await delay(2000);
-      // Check if the target is found
+      setCurrentStep(2);
       if (sortedArray[middle] === target) {
-        settrackk([middle]); // Highlight the index visually
+        settrackk([middle]);
         alert(`Target found at index: ${middle}`);
-        return; // Exit the function after finding the target
+        setCurrentStep(3);
+        return;
       }
-
-      // Decide whether to search in the left or right half
+      setCurrentStep(4);
       if (sortedArray[middle] < target) {
-        left = middle + 1; // Search in the right half
+        left = middle + 1;
         settracki([left]);
         await delay(2000);
+        setCurrentStep(5);
       } else {
-        right = middle - 1; // Search in the left half
+        right = middle - 1;
         settrackj([right]);
         await delay(2000);
+        setCurrentStep(6);
       }
+      setCurrentStep(7);
     }
-
-    // If the loop ends without finding the target
     alert("Target not found in the array.");
     settracki([-1]);
     settrackj([-1]);
+    setCurrentStep(8);
   }
 
   return (
-    <div className="w-full h-screen text-white flex overflow-auto">
-      <div className="w-1/2 h-screen flex-col justify-between ">
-        <h1 className="text-[3vw] pt-[5vh] px-[5vw] leading-none">
-          Array Data Structure
-        </h1>
-        <div className="flex flex-row justify-between h-screen">
-  <div className="flex flex-col items-center justify-start">
-    <div className="mt-[5vh] mx-[5vw] text-4xl">
-      <DropdownMenu>
-        <DropdownMenuTrigger>Sort</DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuLabel>Sorting in Array</DropdownMenuLabel>
-          <DropdownMenuItem>
-            <button onClick={sortArray}>Bubble Sort</button>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <button onClick={arraySelectionSort}>Selection Sort</button>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <button onClick={insertionSort}>Insertion Sort</button>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <button>Insert at the Between</button>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
-    <div className="mt-[5vh] mx-[5vw] text-4xl">
-      <DropdownMenu>
-        <DropdownMenuTrigger>Insert</DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuLabel>Insertion in Array</DropdownMenuLabel>
-          <DropdownMenuItem>
-            <button
-              onClick={() => {
-                setarr([]);
-                setInsert(true);
-                setSearch(false);
-              }}
-            >
-              Insert Data
-            </button>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <button>Insert at the Beginning</button>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <button>Insert at the End</button>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <button>Insert at the Between</button>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
-    <div className="mt-[5vh] mx-[5vw] text-4xl">
-      <DropdownMenu>
-        <DropdownMenuTrigger>Search</DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuLabel>Searching in Array</DropdownMenuLabel>
-          <DropdownMenuItem>
-            <button
-              onClick={() => {
-                resetArray;
-                setSearch(true);
-                setInsert(false);
-                setBinary(false);
-              }}
-            >
-              Traversing in Array
-            </button>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <button
-              onClick={() => {
-                setSearch(true);
-                setInsert(false);
-                setBinary(true);
-                setarr(arr.sort());
-              }}
-            >
-              Binary Search
-            </button>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <button>Insert at the End</button>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <button>Insert at the Between</button>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
-    <div className="mt-[5vh] mx-[5vw] text-4xl">
-      <button
-        onClick={resetArray}
-        className={`${click && "cursor-not-allowed"}`}
-      >
-        Reset
-      </button>
-    </div>
-  </div>
-  <div className="flex-row border-2 border-white w-[40vw] h-[40vh] ml-[5vw] mt-[5vh] bg-zinc-900">
-    {/* Content for the box */}
-    
-  </div>
-</div>
+    <div className="w-full h-screen text-white flex overflow-auto bg-gray-900 p-6">
+      <div className="w-1/2 h-full flex flex-col justify-between">
+        <h1 className="text-4xl font-bold mb-4">Array Data Structure</h1>
+        <div className="flex flex-row justify-between h-full">
+          <div className="flex flex-col items-center justify-start">
+            <div className="mt-4 mx-4 text-2xl">
+              <DropdownMenu>
+                <DropdownMenuTrigger className="bg-gray-800 text-white px-4 py-2 rounded">Sort</DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-gray-800 text-white">
+                  <DropdownMenuLabel>Sorting in Array</DropdownMenuLabel>
+                  <DropdownMenuItem>
+                    <button onClick={sortArray} className="w-full text-left px-4 py-2 hover:bg-gray-700">Bubble Sort</button>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <button onClick={arraySelectionSort} className="w-full text-left px-4 py-2 hover:bg-gray-700">Selection Sort</button>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <button onClick={insertionSort} className="w-full text-left px-4 py-2 hover:bg-gray-700">Insertion Sort</button>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+            <div className="mt-4 mx-4 text-2xl">
+              <DropdownMenu>
+                <DropdownMenuTrigger className="bg-gray-800 text-white px-4 py-2 rounded">Insert</DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-gray-800 text-white">
+                  <DropdownMenuLabel>Insertion in Array</DropdownMenuLabel>
+                  <DropdownMenuItem>
+                    <button onClick={() => { setarr([]); setInsert(true); setSearch(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-700">Insert Data</button>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+            <div className="mt-4 mx-4 text-2xl">
+              <DropdownMenu>
+                <DropdownMenuTrigger className="bg-gray-800 text-white px-4 py-2 rounded">Search</DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-gray-800 text-white">
+                  <DropdownMenuLabel>Searching in Array</DropdownMenuLabel>
+                  <DropdownMenuItem>
+                    <button onClick={() => { resetArray(); setSearch(true); setInsert(false); setBinary(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-700">Traverse Array</button>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <button onClick={() => { setSearch(true); setInsert(false); setBinary(true); setarr(arr.sort((a, b) => a - b)); }} className="w-full text-left px-4 py-2 hover:bg-gray-700">Binary Search</button>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+            <div className="mt-4 mx-4 text-2xl">
+              <button onClick={resetArray} className={`bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-700 ${click && "cursor-not-allowed"}`}>Reset</button>
+            </div>
+          </div>
+          
+        </div>
       </div>
       <div className="flex-col items-center justify-center">
         <div className="flex mx-[5vh] mt-[8vh] border-2 border-white w-[50vw] rounded-sm h-[60vh] items-end justify-center">
-          {!isBinary &&
-            arr.map((item, index) => {
-              return (
-                <div className="">
-                  <div className="flex-col items-center justify-center px-[2vw]">
-                    {index === tracki[0] ? "i" : ""}
-                    {index === trackj[0] ? "j" : ""}
-                  </div>
-                  <div
-                    className={`flex m-1 w-[3.5vw] items-center justify-center rounded-sm ${
-                      index === tracki[0]
-                        ? "bg-green-600" // Highlight for tracki
-                        : index === trackj[0]
-                        ? "bg-blue-600" // Highlight for trackj
-                        : index === trackk[0]
-                        ? "bg-red-600" // Highlight for trackk (new condition)
-                        : "bg-gray-400"
-                    }`}
-                    key={index}
-                    style={{ height: `${item * 2}px` }}
-                  >
-                    {item}
-                  </div>
-
-                  <div className="px-8">{index}</div>
-                </div>
-              );
-            })}
-
-          {isBinary &&
-            arr.map((item, index) => {
-              return (
-                <div className="">
-                  <div className="flex-col items-center justify-center px-[1vw]">
-                    {index === tracki[0] ? "Min" : ""}
-                    {index === trackj[0] ? "Max" : ""}
-                    {index === trackk[0] ? "Mid" : ""}
-                  </div>
-                  <div
-                    className={`flex m-1 w-[3.5vw] items-center justify-center rounded-sm ${
-                      index === tracki[0]
-                        ? "bg-green-600" // Highlight for tracki
-                        : index === trackj[0]
-                        ? "bg-blue-600" // Highlight for trackj
-                        : index === trackk[0]
-                        ? "bg-red-600" // Highlight for trackk (new condition)
-                        : "bg-gray-400"
-                    }`}
-                    key={index}
-                    style={{ height: `${item * 2}px` }}
-                  >
-                    {item}
-                  </div>
-                  <div className="px-8">{index}</div>
-                </div>
-              );
-            })}
+          {!isBinary && arr.map((item, index) => (
+            <div key={index} className="flex flex-col items-center justify-center mx-1">
+              <div className="flex-col items-center justify-center px-[2vw]">
+                {index === tracki[0] ? "i" : ""}
+                {index === trackj[0] ? "j" : ""}
+              </div>
+              <div className={`flex m-1 w-[3.5vw] items-center justify-center rounded-sm ${
+                index === tracki[0] ? "bg-green-600" :
+                index === trackj[0] ? "bg-blue-600" :
+                index === trackk[0] ? "bg-red-600" :
+                "bg-gray-400"}`}
+                style={{ height: `${item * 2}px` }}>
+                {item}
+              </div>
+              <div className="px-8">{index}</div>
+            </div>
+          ))}
+          {isBinary && arr.map((item, index) => (
+            <div key={index} className="flex flex-col items-center justify-center mx-1">
+              <div className="flex-col items-center justify-center px-[1vw]">
+                {index === tracki[0] ? "Min" : ""}
+                {index === trackj[0] ? "Max" : ""}
+                {index === trackk[0] ? "Mid" : ""}
+              </div>
+              <div className={`flex m-1 w-[3.5vw] items-center justify-center rounded-sm ${
+                index === tracki[0] ? "bg-green-600" :
+                index === trackj[0] ? "bg-blue-600" :
+                index === trackk[0] ? "bg-red-600" :
+                "bg-gray-400"}`}
+                style={{ height: `${item * 2}px` }}>
+                {item}
+              </div>
+              <div className="px-8">{index}</div>
+            </div>
+          ))}
         </div>
         <div>
           {isInsert && (
             <div className="border-2 border-white w-[50vw] h-[13vh] ml-[2.2vw] rounded-sm mt-[5vh] flex items-center">
               <p className="mx-2 text-xl">Enter Data</p>
-              <input
-                type="number"
-                placeholder="Number Only"
-                className="input input-bordered mt-1 mx-1 mb-1 text-black"
-                id="arrayelement"
-                name="value"
-              />
-              {isInsert && (
-                <button
-                  className="text-xl mx-2 bg-blue-600 rounded-sm p-2"
-                  onClick={addElement}
-                >
-                  Add
-                </button>
-              )}
+              <input type="number" placeholder="Number Only" className="input input-bordered mt-1 mx-1 mb-1 text-black" id="arrayelement" name="value" />
+              <button className="text-xl mx-2 bg-blue-600 rounded-sm p-2" onClick={addElement}>Add</button>
             </div>
           )}
           {isSearch && (
             <div className="border-2 border-white w-[50vw] h-[13vh] ml-[2.2vw] rounded-sm mt-[5vh] flex items-center">
               <p className="mx-2 text-xl">Enter Data</p>
-              <input
-                type="number"
-                placeholder="Number Only"
-                className="input input-bordered mt-1 mx-1 mb-1 text-black"
-                id="arrayelement"
-                name="value"
-              />
+              <input type="number" placeholder="Number Only" className="input input-bordered mt-1 mx-1 mb-1 text-black" id="arrayelement" name="value" />
               {!isBinary && (
-                <button
-                  className="text-xl mx-2 bg-blue-600 rounded-sm p-2"
-                  onClick={searchingArray}
-                >
-                  Search
-                </button>
+                <button className="text-xl mx-2 bg-blue-600 rounded-sm p-2" onClick={searchingArray}>Search</button>
               )}
-
               {isBinary && (
-                <>
-                  <button
-                    className="text-xl mx-2 bg-blue-600 rounded-sm p-2"
-                    onClick={binarySearch}
-                  >
-                    Search
-                  </button>
-                  {/* <button className="text-xl mx-2 bg-blue-600 rounded-sm p-2" onClick={()=>{
-                    setarr([]);
-                    let reArray = arr;
-                    for (let i = 0; i < 8; i++) {
-                      reArray.push(Math.floor(Math.random() * (95 - 10 + 1)) + 10);
-                    }
-                    setarr(reArray.sort((a, b) => a - b));
-                  }}>
-                    Reset
-                  </button> */}
-                </>
+                <button className="text-xl mx-2 bg-blue-600 rounded-sm p-2" onClick={binarySearch}>Search</button>
               )}
             </div>
           )}
+        </div>
+        <div className="w-full max-w-4xl bg-gray-800 rounded-lg shadow-lg p-6 mt-4">
+          <h2 className="text-2xl font-semibold mb-4">Pseudo-code</h2>
+          <div className="p-4 bg-gray-700 rounded-lg">
+            <code className="text-gray-300 font-mono whitespace-pre-wrap">
+              {pseudoCode.map((step, index) => (
+                <div key={index} className={currentStep === index ? "text-yellow-300" : ""}>
+                  {step}
+                </div>
+              ))}
+            </code>
+          </div>
         </div>
       </div>
     </div>
@@ -450,48 +398,3 @@ const MainPage = () => {
 };
 
 export default MainPage;
-//  // Required for Next.js 13 to use client-side interactivity
-
-// import { motion } from 'framer-motion'; // For animations
-
-// const SwapDivsArray = () => {
-//   // Initial array of elements
-//   const [arr, setArr] = useState([1, 2, 3, 4, 5]); // You can use any elements
-
-//   // Function to handle swapping elements
-//   const handleSwap = (index1, index2) => {
-//     const newArr = [...arr]; // Create a copy of the array
-//     // Swap logic
-//     const temp = newArr[index1];
-//     newArr[index1] = newArr[index2];
-//     newArr[index2] = temp;
-//     setArr(newArr); // Update the state with the new array
-//   };
-
-//   return (
-//     <div className="flex flex-col items-center justify-center h-screen">
-//       <div className="flex justify-center">
-//         {arr.map((item, index) => (
-//           <motion.div
-//             key={index}
-//             className={`w-32 h-${item} ${index%2 == 0 ? 'bg-blue-500':'bg-red-500'} text-white flex items-center justify-center m-2 transition-transform duration-500`}
-//             style={{
-//               transform: `translateX(${index * 120}px)`, // Position based on index
-//             }}
-//           >
-//             {item}
-//           </motion.div>
-//         ))}
-//       </div>
-
-//       <button
-//         onClick={() => handleSwap(0, 3)} // Swap elements at index 1 and 3
-//         className="mt-5 bg-blue-500 text-white px-4 py-2 rounded"
-//       >
-//         Swap
-//       </button>
-//     </div>
-//   );
-// };
-
-// export default SwapDivsArray;

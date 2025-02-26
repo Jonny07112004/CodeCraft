@@ -1,179 +1,187 @@
-import React, { useState, useRef } from "react";
-import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
-import { useSpring, animated } from "@react-spring/three";
-import * as THREE from "three";
-
-// Disk Component with animation
-const AnimatedDisk = ({ position, size, color }: { position: [number, number, number]; size: number; color: string }) => {
-  const { positionSpring } = useSpring({
-    positionSpring: position,
-    config: { mass: 1, tension: 200, friction: 20 },
-  });
-
-  return (
-    <animated.mesh position={positionSpring}>
-      <cylinderGeometry args={[size * 0.4, size * 0.4, 0.3, 32]} />
-      <meshStandardMaterial color={color} />
-    </animated.mesh>
-  );
-};
-
-const TowerOfHanoi = () => {
-  const [numDisks, setNumDisks] = useState(3);
-  const [towers, setTowers] = useState<number[][]>([[], [], []]);
-  const [steps, setSteps] = useState<string[]>([]);
-  const [isSolving, setIsSolving] = useState(false);
-  const [diskPositions, setDiskPositions] = useState<{ [key: number]: [number, number, number] }>({});
-
-  // Initialize Disks
-  const resetGame = () => {
-    const initialTower = Array.from({ length: numDisks }, (_, i) => numDisks - i);
-    setTowers([initialTower, [], []]);
-    setSteps([]);
-    setIsSolving(false);
-  
-    const newPositions: { [key: number]: [number, number, number] } = {};
-    initialTower.forEach((disk, index) => {
-      newPositions[disk] = [-3, -0.5 + index * 0.3, 0]; // Ensure valid positions
-    });
-  
-    setDiskPositions(newPositions);
-  };
-  
-
-  // Tower of Hanoi Recursive Solver
-  const solveHanoi = (n: number, from: number, to: number, aux: number, stepsArr: string[], moveArr: any[]) => {
-    if (n === 1) {
-      stepsArr.push(`Move disk 1 from Rod ${from + 1} to Rod ${to + 1}`);
-      moveArr.push([from, to, 1]);
-      return;
-    }
-    solveHanoi(n - 1, from, aux, to, stepsArr, moveArr);
-    stepsArr.push(`Move disk ${n} from Rod ${from + 1} to Rod ${to + 1}`);
-    moveArr.push([from, to, n]);
-    solveHanoi(n - 1, aux, to, from, stepsArr, moveArr);
-  };
-
-  // Animate Disk Movement
-  const animateHanoi = async (moves: any[]) => {
-    setIsSolving(true);
-    for (const [from, to, disk] of moves) {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      setDiskPositions((prevPositions) => {
-        if (!prevPositions[disk]) return prevPositions; // Prevent undefined access
-        return {
-          ...prevPositions,
-          [disk]: [
-            prevPositions[disk][0], // X position
-            prevPositions[disk][1] + 1, // Y position (lifting up)
-            prevPositions[disk][2], // Z position
-          ],
-        };
-      });
-      
-
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      setDiskPositions((prevPositions) => ({
-        ...prevPositions,
-        [disk]: [to * 3 - 3, prevPositions[disk][1] + 1, prevPositions[disk][2]],
-      }));
-
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      setDiskPositions((prevPositions) => ({
-        ...prevPositions,
-        [disk]: [to * 3 - 3, -0.5 + towers[to].length * 0.3, prevPositions[disk][2]],
-      }));
-
-      setTowers((prevTowers) => {
-        const newTowers = prevTowers.map((tower) => [...tower]);
-        newTowers[from].pop();
-        newTowers[to].push(disk);
-        return newTowers;
+// The exported code uses Tailwind CSS. Install Tailwind CSS in your dev environment to ensure all styles work.
+import React, { useState, useEffect } from 'react';
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+interface Disk {
+  size: number;
+  color: string;
+}
+const App: React.FC = () => {
+  const [moves, setMoves] = useState<number>(0);
+  const [selectedRod, setSelectedRod] = useState<number | null>(null);
+  const [towers, setTowers] = useState<Disk[][]>([]);
+  const [gameWon, setGameWon] = useState<boolean>(false);
+  const [showError, setShowError] = useState<boolean>(false);
+  const [diskCount, setDiskCount] = useState<number>(5);
+  const colors = [
+    'bg-emerald-400',
+    'bg-sky-400',
+    'bg-amber-400',
+    'bg-indigo-400',
+    'bg-rose-400',
+    'bg-teal-400',
+    'bg-purple-400',
+  ];
+  const initializeTowers = () => {
+    const initialTowers: Disk[][] = [[], [], []];
+    for (let i = 1; i <= diskCount; i++) {
+      initialTowers[0].push({
+        size: i,
+        color: colors[(i - 1) % colors.length],
       });
     }
-    setIsSolving(false);
+    setTowers(initialTowers);
+    setMoves(0);
+    setGameWon(false);
+    setSelectedRod(null);
   };
-
-  // Start the Solution
-  const startSolving = () => {
-    const stepsArr: string[] = [];
-    const moveArr: any[] = [];
-    solveHanoi(numDisks, 0, 2, 1, stepsArr, moveArr);
-    setSteps(stepsArr);
-    animateHanoi(moveArr);
+  useEffect(() => {
+    initializeTowers();
+  }, []);
+  const handleRodClick = (rodIndex: number) => {
+    if (selectedRod === null) {
+      if (towers[rodIndex].length === 0) return;
+      setSelectedRod(rodIndex);
+    } else {
+      if (selectedRod === rodIndex) {
+        setSelectedRod(null);
+        return;
+      }
+      const sourceRod = towers[selectedRod];
+      const targetRod = towers[rodIndex];
+      if (sourceRod.length === 0) {
+        setSelectedRod(null);
+        return;
+      }
+      const diskToMove = sourceRod[0];
+      const targetTopDisk = targetRod[0];
+      // Check if the move is valid (smaller disk on larger disk)
+      if (targetRod.length > 0 && diskToMove.size > targetTopDisk.size) {
+        setShowError(true);
+        setTimeout(() => setShowError(false), 2000);
+        setSelectedRod(null);
+        return;
+      }
+      const newTowers = towers.map((rod, index) => {
+        if (index === selectedRod) {
+          return rod.slice(1);
+        }
+        if (index === rodIndex) {
+          return [diskToMove, ...rod];
+        }
+        return rod;
+      });
+      setTowers(newTowers);
+      setMoves(moves + 1);
+      setSelectedRod(null);
+      // Check win condition - all disks moved to the last rod
+      if (rodIndex === 2 && newTowers[2].length === diskCount) {
+        setGameWon(true);
+      }
+    }
   };
-
   return (
-    <div className="flex flex-col items-center w-full h-screen bg-gray-900 text-white p-4">
-      <h1 className="text-2xl mb-4">Tower of Hanoi - 3D Visualization</h1>
-
-      <div className="flex gap-4 mb-4">
-        <input
-          type="number"
-          min="1"
-          max="5"
-          value={numDisks}
-          onChange={(e) => setNumDisks(Math.min(5, Math.max(1, parseInt(e.target.value))))}
-          className="px-2 py-1 text-black rounded"
-        />
-        <button onClick={resetGame} className="px-4 py-2 bg-blue-500 rounded">Reset</button>
-        <button onClick={startSolving} disabled={isSolving} className="px-4 py-2 bg-green-500 rounded">
-          Solve
-        </button>
-      </div>
-
-      <div className="w-full h-[400px]">
-        <Canvas>
-          <ambientLight intensity={0.5} />
-          <spotLight position={[10, 10, 10]} angle={0.15} />
-          <OrbitControls />
-
-          {[...Array(3)].map((_, i) => (
-            <mesh key={i} position={[i * 3 - 3, -1, 0]}>
-              <cylinderGeometry args={[0.2, 0.2, 3, 32]} />
-              <meshStandardMaterial color="red" />
-            </mesh>
-          ))}
-
-          {Object.entries(diskPositions).map(([disk, position]) => (
-            <AnimatedDisk key={disk} position={position as [number, number, number]} size={parseInt(disk)} color={["red", "blue", "green", "yellow", "purple"][parseInt(disk) - 1]} />
-          ))}
-        </Canvas>
-      </div>
-
-      <div className="mt-4 w-[80%] bg-gray-800 p-4 rounded">
-        <h2 className="text-lg mb-2 text-green-400">Algorithm:</h2>
-        <pre className="whitespace-pre-wrap text-gray-300">
-          {`
-ALGORITHM TowerOfHanoi(n, from, to, aux)
-  IF n == 1 THEN
-    Move disk 1 from Rod from to Rod to
-  ELSE
-    TowerOfHanoi(n-1, from, aux, to)
-    Move disk n from Rod from to Rod to
-    TowerOfHanoi(n-1, aux, to, from)
-  END IF
-END ALGORITHM
-          `}
-        </pre>
-      </div>
-
-      <div className="mt-4 w-[80%] bg-gray-700 p-4 rounded text-sm">
-        <h2 className="text-lg mb-2 text-yellow-400">Steps:</h2>
-        <ul>
-          {steps.map((step, index) => (
-            <li key={index} className="text-gray-300">
-              {step}
-            </li>
-          ))}
-        </ul>
+    <div className="min-h-screen bg-slate-950 py-12 px-4">
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-white mb-4">Tower of Hanoi</h1>
+          <p className="text-lg text-gray-300">
+            Move all disks from the first rod to the last rod. You can't place a larger disk on top of a smaller one.
+          </p>
+          {gameWon && (
+            <div className="mt-4 p-4 bg-emerald-900/50 text-emerald-100 rounded-lg border border-emerald-800/50">
+              Congratulations! You solved the puzzle in {moves} moves!
+            </div>
+          )}
+          {showError && (
+            <div className="mt-4 p-4 bg-rose-900/50 text-rose-100 rounded-lg border border-rose-800/50">
+              Invalid move! You can't place a larger disk on a smaller one.
+            </div>
+          )}
+        </div>
+        <div className="flex justify-between items-center mb-8">
+          <div className="text-xl font-semibold text-white">Moves: {moves}</div>
+          <div className="flex items-center gap-4">
+            <Select
+              value={diskCount.toString()}
+              onValueChange={(value) => {
+                setDiskCount(Number(value));
+                setTimeout(() => initializeTowers(), 0);
+              }}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select disk count" />
+              </SelectTrigger>
+              <SelectContent>
+                {[3, 4, 5, 6, 7].map((num) => (
+                  <SelectItem key={num} value={num.toString()}>
+                    {num} Disks
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button onClick={initializeTowers} className="!rounded-button">
+              Reset Game
+            </Button>
+          </div>
+        </div>
+        <Alert className="mb-4 bg-sky-950/50 border-sky-800/50 text-sky-100">
+          <AlertTitle>Stack Operations</AlertTitle>
+          <AlertDescription>
+            Total operations performed: {moves}
+          </AlertDescription>
+        </Alert>
+        <Card className="p-8 bg-slate-900/50 shadow-lg mb-8 border-slate-800">
+          <div className="flex justify-around items-end h-[400px] relative">
+            {towers.map((rod, rodIndex) => (
+              <div
+                key={rodIndex}
+                className={`flex flex-col items-center cursor-pointer ${selectedRod === rodIndex ? 'opacity-75' : ''
+                  }`}
+                onClick={() => handleRodClick(rodIndex)}
+              >
+                <div className="relative w-4 h-[300px] bg-slate-700 rounded-t-lg">
+                  <div className="absolute bottom-0 w-full">
+                    {rod.map((disk, diskIndex) => (
+                      <div
+                        key={diskIndex}
+                        className={`h-12 rounded-lg ${disk.color} transition-all duration-300`}
+                        style={{
+                          width: `${disk.size * 40}px`,
+                          marginLeft: `-${(disk.size * 40 - 16) / 2}px`,
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <div className="w-20 h-4 bg-slate-800 rounded-lg" />
+                <div className="mt-4 text-xl font-semibold text-white">Stack {rodIndex + 1}</div>
+              </div>
+            ))}
+          </div>
+        </Card>
+        <Collapsible className="mb-8">
+          <CollapsibleTrigger className="w-full">
+            <Button variant="outline" className="w-full !rounded-button">
+              How to Play
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="mt-4 p-4 bg-slate-900/50 rounded-lg shadow text-slate-100 border border-slate-800">
+            <h3 className="text-xl font-semibold mb-4 text-white">Rules:</h3>
+            <ul className="list-disc pl-6 space-y-2">
+              <li>Only one disk can be moved at a time</li>
+              <li>Each move consists of taking the upper disk from one of the rods and placing it on top of another rod</li>
+              <li>No disk may be placed on top of a smaller disk</li>
+              <li>The goal is to move all disks from the first rod to the last rod</li>
+              <li>Click on a rod to select it, then click on another rod to move the top disk</li>
+            </ul>
+          </CollapsibleContent>
+        </Collapsible>
       </div>
     </div>
   );
 };
-
-export default TowerOfHanoi;
+export default App

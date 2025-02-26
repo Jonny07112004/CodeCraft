@@ -1,0 +1,150 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Arial', sans-serif;
+  background-color: #121212;
+  color: #ffffff;
+  height: 100vh;
+  width: 100vw;
+  padding: 20px;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.heading {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #ffcc00;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.content {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  height: 100%;
+  max-width: 1400px;
+}
+
+.pseudoCode {
+  width: 25%;
+  background: #1e1e1e;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.pseudoCode h2 {
+  font-size: 24px;
+  margin-bottom: 15px;
+  color: #ffcc00;
+}
+
+.steps {
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.step {
+  color: #cccccc;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.highlightedStep {
+  background-color: #333;
+  color: #ffcc00;
+  font-weight: bold;
+}
+
+.totalCost {
+  margin-top: 15px;
+  font-size: 18px;
+  color: #ffcc00;
+}
+
+.visualization {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.graph {
+  width: 100%;
+  height: 100%;
+  border: 1px solid #444;
+  background: #1e1e1e;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.circle {
+  fill: #444;
+  stroke: #ffffff;
+  stroke-width: 2px;
+  transition: fill 0.3s, stroke 0.3s;
+}
+
+.startNode {
+  fill: #00cc00 !important;
+}
+
+.endNode {
+  fill: #cc0000 !important;
+}
+
+.visitedNode {
+  fill: #ffcc00 !important;
+}
+
+.pathNode {
+  fill: #0066cc !important;
+}
+
+.startButton {
+  margin-top: 25px;
+  padding: 12px 24px;
+  font-size: 18px;
+  cursor: pointer;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.startButton:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+.additionLog {
+  width: 25%;
+  background: #1e1e1e;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.additionLog h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #ffcc00;
+}
+
+.logEntry {
+  font-size: 14px;
+  color: #cccccc;
+  padding: 5px;
+  border-bottom: 1px solid #444;
+}

@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Algorithms</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#00ffaa",
+              secondary: "#00aaff",
+              dark: "#000000",
+              darkSecondary: "#1A1A1A",
+              neonPink: "#ff00ff",
+              neonBlue: "#00ffff",
+              neonPurple: "#9900ff",
+            },
+            borderRadius: {
+              none: "0px",
+              sm: "4px",
+              DEFAULT: "8px",
+              md: "12px",
+              lg: "16px",
+              xl: "20px",
+              "2xl": "24px",
+              "3xl": "32px",
+              full: "9999px",
+              button: "8px",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      :where([class^="ri-"])::before { content: "\f3c2"; }
+      body {
+      background: linear-gradient(to right, #000000, #1A1A2E);
+      }
+      .hero-bg {
+      position: relative;
+      overflow: hidden;
+      }
+      .algorithm-card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(0, 255, 255, 0.1);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
+      transition: all 0.5s ease;
+      transform-style: preserve-3d;
+      perspective: 1000px;
+      will-change: transform;
+      }
+      .algorithm-card:hover {
+      transform: translateY(-5px) rotateX(10deg);
+      border-color: rgba(0, 255, 255, 0.5);
+      box-shadow:
+      0 0 20px rgba(0, 255, 255, 0.2),
+      0 0 40px rgba(153, 0, 255, 0.1),
+      0 0 60px rgba(255, 0, 255, 0.1);
+      }
+      .algorithm-card:hover .w-16 {
+      transform: translateZ(30px) rotateY(360deg);
+      transition: transform 1s ease;
+      }
+      .algorithm-card h3 {
+      transform: translateZ(20px);
+      transition: transform 0.3s ease;
+      }
+      .algorithm-card p {
+      transform: translateZ(10px);
+      transition: transform 0.3s ease;
+      }
+      .algorithm-card .flex {
+      transform: translateZ(25px);
+      transition: transform 0.3s ease;
+      }
+      .algorithm-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(0, 229, 255, 0.5);
+      box-shadow: 0 8px 32px rgba(0, 229, 255, 0.15);
+      }
+      .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      }
+      .glow-text {
+      text-shadow:
+      0 0 10px rgba(0, 255, 255, 0.5),
+      0 0 20px rgba(0, 255, 255, 0.3),
+      0 0 30px rgba(153, 0, 255, 0.2),
+      0 0 40px rgba(255, 0, 255, 0.1);
+      }
+    </style>
+  </head>
+  <body class="bg-dark min-h-screen">
+    <div class="floating-particles">
+      <style>
+        .floating-particles {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+        }
+        .particle {
+        position: absolute;
+        background: linear-gradient(45deg, rgba(0, 229, 255, 0.15), rgba(139, 61, 255, 0.15));
+        border-radius: 50%;
+        animation: float linear infinite;
+        }
+        @keyframes float {
+        0% {
+        transform: translateY(100vh) scale(0);
+        opacity: 0;
+        }
+        50% {
+        opacity: 1;
+        }
+        100% {
+        transform: translateY(-100px) scale(1);
+        opacity: 0;
+        }
+        }
+      </style>
+      <script>
+        function createParticles() {
+          const container = document.querySelector(".floating-particles");
+          for (let i = 0; i < 50; i++) {
+            const particle = document.createElement("div");
+            particle.className = "particle";
+            particle.style.width = Math.random() * 5 + "px";
+            particle.style.height = particle.style.width;
+            particle.style.left = Math.random() * 100 + "vw";
+            particle.style.animationDelay = Math.random() * 15 + "s";
+            particle.style.animationDuration = Math.random() * 15 + 15 + "s";
+            container.appendChild(particle);
+          }
+        }
+        createParticles();
+        setInterval(() => {
+          const particles = document.querySelectorAll(".particle");
+          particles.forEach((particle) => {
+            if (parseFloat(particle.style.top) < -100) {
+              particle.remove();
+              const newParticle = document.createElement("div");
+              newParticle.className = "particle";
+              newParticle.style.width = Math.random() * 5 + "px";
+              newParticle.style.height = newParticle.style.width;
+              newParticle.style.left = Math.random() * 100 + "vw";
+              newParticle.style.animationDelay = "0s";
+              newParticle.style.animationDuration = Math.random() * 15 + 15 + "s";
+              document.querySelector(".floating-particles").appendChild(newParticle);
+            }
+          });
+        }, 1000);
+      </script>
+    </div>
+    <div class="cube-wrapper">
+      <div class="cube">
+        <div class="cube-face"></div>
+        <div class="cube-face"></div>
+        <div class="cube-face"></div>
+        <div class="cube-face"></div>
+        <div class="cube-face"></div>
+        <div class="cube-face"></div>
+      </div>
+    </div>
+    <div class="dna-helix">
+      <script>
+        function createDNAStrands() {
+          const helix = document.querySelector(".dna-helix");
+          for (let i = 0; i < 20; i++) {
+            const strand = document.createElement("div");
+            strand.className = "dna-strand";
+            strand.style.top = i * 15 + "px";
+            strand.style.animationDelay = i * 0.15 + "s";
+            helix.appendChild(strand);
+          }
+        }
+        createDNAStrands();
+      </script>
+    </div>
+    <section class="hero-bg py-24 relative">
+      <div
+        class="absolute inset-0 bg-gradient-to-b from-transparent to-black/50"
+      ></div>
+      <div class="absolute inset-0">
+        <div class="relative w-full h-full">
+          <div
+            class="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(75,75,75,0.1),transparent_70%)]"
+          ></div>
+          <div
+            class="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(100,100,100,0.1),transparent_50%)]"
+          ></div>
+          <div
+            class="absolute inset-0"
+            style="background:
+linear-gradient(217deg, rgba(75,75,75,.1), rgba(0,0,0,0) 70.71%),
+linear-gradient(127deg, rgba(100,100,100,.1), rgba(0,0,0,0) 70.71%),
+linear-gradient(336deg, rgba(75,75,75,.1), rgba(0,0,0,0) 70.71%);"
+          ></div>
+          <div class="absolute inset-0">
+            <div
+              class="h-full w-full animate-fade-in"
+              style="background: radial-gradient(circle at 50% 50%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.3) 100%),
+url('https://public.readdy.ai/ai/img_res/f50a5efa84c73d91a491c06115766cbd.jpg');
+background-size: cover;
+background-position: center;
+background-repeat: no-repeat;"
+            >
+              <style>
+                @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+                }
+                @keyframes slideInFromTop {
+                from {
+                transform: translateY(-100%);
+                opacity: 0;
+                }
+                to {
+                transform: translateY(0);
+                opacity: 1;
+                }
+                }
+                @keyframes scaleIn {
+                from {
+                transform: scale(0.8);
+                opacity: 0;
+                }
+                to {
+                transform: scale(1);
+                opacity: 1;
+                }
+                }
+                .animate-fade-in {
+                animation: fadeIn 2s ease-out forwards;
+                }
+                .animate-slide-in {
+                animation: slideInFromTop 1.5s ease-out forwards;
+                }
+                .animate-scale-in {
+                animation: scaleIn 1.5s ease-out forwards;
+                }
+              </style>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center relative z-10 animate-slide-in">
+          <div class="perspective-1000">
+            <h1
+              class="text-7xl font-bold text-white mb-6 glow-text bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary animate-float"
+            >
+              AI Algorithms
+            </h1>
+          </div>
+          <style>
+            @keyframes float {
+            0% {
+            transform: translateZ(0px) rotateX(0deg) rotateY(0deg);
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            }
+            25% {
+            transform: translateZ(20px) rotateX(5deg) rotateY(5deg);
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.6), 0 0 40px rgba(153, 0, 255, 0.3);
+            }
+            50% {
+            transform: translateZ(40px) rotateX(-5deg) rotateY(-5deg);
+            text-shadow: 0 0 30px rgba(0, 255, 255, 0.7), 0 0 50px rgba(255, 0, 255, 0.4);
+            }
+            75% {
+            transform: translateZ(20px) rotateX(5deg) rotateY(5deg);
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.6), 0 0 40px rgba(153, 0, 255, 0.3);
+            }
+            100% {
+            transform: translateZ(0px) rotateX(0deg) rotateY(0deg);
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            }
+            }
+            @keyframes cardHover {
+            0% { transform: translateZ(0) rotateX(0); }
+            100% { transform: translateZ(30px) rotateX(10deg); }
+            }
+            @keyframes iconSpin {
+            0% { transform: rotateY(0deg); }
+            100% { transform: rotateY(360deg); }
+            }
+            @keyframes glowPulse {
+            0% { box-shadow: 0 0 5px rgba(0, 229, 255, 0.2); }
+            50% { box-shadow: 0 0 20px rgba(0, 229, 255, 0.4); }
+            100% { box-shadow: 0 0 5px rgba(0, 229, 255, 0.2); }
+            }
+            .perspective-1000 {
+            perspective: 1000px;
+            }
+            .animate-float {
+            animation: float 6s ease-in-out infinite;
+            transform-style: preserve-3d;
+            }
+            .algorithm-card {
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+            }
+            .algorithm-card:hover {
+            animation: cardHover 0.5s ease forwards;
+            }
+            .algorithm-card:hover .w-16 {
+            animation: iconSpin 1.5s ease-in-out infinite;
+            }
+            .algorithm-card:hover {
+            animation: glowPulse 2s infinite;
+            }
+            .button-3d {
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.2s ease;
+            }
+            .button-3d:hover {
+            transform: translateZ(10px);
+            }
+            .button-3d::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: inherit;
+            transform: translateZ(-10px);
+            filter: brightness(0.8);
+            }
+          </style>
+        </div>
+      </div>
+    </section>
+    <section class="py-16 relative overflow-hidden" id="algorithmSection">
+      <div class="absolute inset-0">
+        <div class="grid grid-cols-8 gap-8 opacity-5">
+          <div
+            class="h-full w-full bg-gradient-to-br from-neonBlue/20 to-transparent rounded-full filter blur-3xl animate-pulse"
+          ></div>
+          <div
+            class="h-full w-full bg-gradient-to-br from-neonPurple/20 to-transparent rounded-full filter blur-3xl animate-pulse delay-100"
+          ></div>
+          <div
+            class="h-full w-full bg-gradient-to-br from-gray-500/20 to-transparent rounded-full filter blur-3xl animate-pulse delay-200"
+          ></div>
+          <div
+            class="h-full w-full bg-gradient-to-br from-gray-600/20 to-transparent rounded-full filter blur-3xl animate-pulse delay-300"
+          ></div>
+          <div
+            class="h-full w-full bg-gradient-to-br from-gray-500/20 to-transparent rounded-full filter blur-3xl animate-pulse delay-400"
+          ></div>
+          <div
+            class="h-full w-full bg-gradient-to-br from-gray-600/20 to-transparent rounded-full filter blur-3xl animate-pulse delay-500"
+          ></div>
+          <div
+            class="h-full w-full bg-gradient-to-br from-gray-500/20 to-transparent rounded-full filter blur-3xl animate-pulse delay-600"
+          ></div>
+          <div
+            class="h-full w-full bg-gradient-to-br from-gray-600/20 to-transparent rounded-full filter blur-3xl animate-pulse delay-700"
+          ></div>
+        </div>
+        <div
+          class="absolute inset-0 bg-gradient-to-t from-dark via-dark/80 to-transparent"
+        ></div>
+      </div>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        <div class="text-center mb-16 animate-scale-in">
+          <h2
+            class="text-3xl font-bold text-white mb-4 animate-pulse hover:scale-105 transition-transform duration-300 cursor-pointer relative group"
+          >
+            Featured Algorithms
+            <span
+              class="absolute -bottom-1 left-1/2 w-0 h-0.5 bg-gradient-to-r from-primary to-secondary group-hover:w-full transition-all duration-300 transform -translate-x-1/2"
+            ></span>
+            <span
+              class="absolute -inset-1 bg-white/5 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 rounded-lg -z-10"
+            ></span>
+          </h2>
+          <p class="text-gray-400">
+            Choose from our collection of state-of-the-art AI algorithms
+          </p>
+        </div>
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5 gap-8"
+        >
+          <div class="algorithm-card p-6 rounded-lg perspective-1000">
+            <div
+              class="w-16 h-16 flex items-center justify-center bg-primary bg-opacity-10 rounded-full mx-auto mb-6 transform-gpu transition-transform duration-300"
+            >
+              <i class="ri-brain-line text-primary text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-white mb-4 text-center">
+              Neural Networks
+            </h3>
+            <p class="text-gray-400 mb-6 text-center">
+              Advanced deep learning models for complex pattern recognition
+            </p>
+            <div class="flex justify-center space-x-4">
+              <button
+                onclick="showModal('neural')"
+                class="button-3d bg-primary text-white px-4 py-2 !rounded-button whitespace-nowrap hover:bg-opacity-90"
+              >
+                Access
+              </button>
+              <button
+                onclick="showInfo('neural')"
+                class="button-3d border border-primary text-primary px-4 py-2 !rounded-button whitespace-nowrap hover:bg-primary hover:text-white"
+              >
+                Info
+              </button>
+            </div>
+          </div>
+          <div class="algorithm-card p-6 rounded-lg perspective-1000">
+            <div
+              class="w-16 h-16 flex items-center justify-center bg-secondary bg-opacity-10 rounded-full mx-auto mb-6"
+            >
+              <i class="ri-robot-line text-secondary text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-white mb-4 text-center">
+              Machine Learning
+            </h3>
+            <p class="text-gray-400 mb-6 text-center">
+              Automated learning systems for predictive analytics
+            </p>
+            <div class="flex justify-center space-x-4">
+              <button
+                onclick="showModal('ml')"
+                class="bg-secondary text-white px-4 py-2 !rounded-button whitespace-nowrap hover:bg-opacity-90"
+              >
+                Access
+              </button>
+              <button
+                onclick="showInfo('ml')"
+                class="border border-secondary text-secondary px-4 py-2 !rounded-button whitespace-nowrap hover:bg-secondary hover:text-white"
+              >
+                Info
+              </button>
+            </div>
+          </div>
+          <div class="algorithm-card p-6 rounded-lg perspective-1000">
+            <div
+              class="w-16 h-16 flex items-center justify-center bg-primary bg-opacity-10 rounded-full mx-auto mb-6 transform-gpu transition-transform duration-300"
+            >
+              <i class="ri-computer-line text-primary text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-white mb-4 text-center">
+              Computer Vision
+            </h3>
+            <p class="text-gray-400 mb-6 text-center">
+              Advanced image processing and object detection
+            </p>
+            <div class="flex justify-center space-x-4">
+              <button
+                onclick="showModal('vision')"
+                class="bg-primary text-white px-4 py-2 !rounded-button whitespace-nowrap hover:bg-opacity-90"
+              >
+                Access
+              </button>
+              <button
+                onclick="showInfo('vision')"
+                class="border border-primary text-primary px-4 py-2 !rounded-button whitespace-nowrap hover:bg-primary hover:text-white"
+              >
+                Info
+              </button>
+            </div>
+          </div>
+          <div class="algorithm-card p-6 rounded-lg perspective-1000">
+            <div
+              class="w-16 h-16 flex items-center justify-center bg-secondary bg-opacity-10 rounded-full mx-auto mb-6"
+            >
+              <i class="ri-cloud-line text-secondary text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-white mb-4 text-center">
+              Natural Language Processing
+            </h3>
+            <p class="text-gray-400 mb-6 text-center">
+              Advanced text analysis and language understanding systems
+            </p>
+            <div class="flex justify-center space-x-4">
+              <button
+                onclick="showModal('nlp')"
+                class="bg-secondary text-white px-4 py-2 !rounded-button whitespace-nowrap hover:bg-opacity-90"
+              >
+                Access
+              </button>
+              <button
+                onclick="showInfo('nlp')"
+                class="border border-secondary text-secondary px-4 py-2 !rounded-button whitespace-nowrap hover:bg-secondary hover:text-white"
+              >
+                Info
+              </button>
+            </div>
+          </div>
+          <div class="algorithm-card p-6 rounded-lg perspective-1000">
+            <div
+              class="w-16 h-16 flex items-center justify-center bg-primary bg-opacity-10 rounded-full mx-auto mb-6 transform-gpu transition-transform duration-300"
+            >
+              <i class="ri-database-2-line text-primary text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-white mb-4 text-center">
+              Data Mining
+            </h3>
+            <p class="text-gray-400 mb-6 text-center">
+              Powerful algorithms for extracting patterns from large datasets
+            </p>
+            <div class="flex justify-center space-x-4">
+              <button
+                onclick="showModal('data')"
+                class="bg-primary text-white px-4 py-2 !rounded-button whitespace-nowrap hover:bg-opacity-90"
+              >
+                Access
+              </button>
+              <button
+                onclick="showInfo('data')"
+                class="border border-primary text-primary px-4 py-2 !rounded-button whitespace-nowrap hover:bg-primary hover:text-white"
+              >
+                Info
+              </button>
+            </div>
+          </div>
+          <div class="algorithm-card p-6 rounded-lg perspective-1000">
+            <div
+              class="w-16 h-16 flex items-center justify-center bg-secondary bg-opacity-10 rounded-full mx-auto mb-6"
+            >
+              <i class="ri-gamepad-line text-secondary text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-white mb-4 text-center">
+              Reinforcement Learning
+            </h3>
+            <p class="text-gray-400 mb-6 text-center">
+              Advanced algorithms for decision-making and optimization
+            </p>
+            <div class="flex justify-center space-x-4">
+              <button
+                onclick="showModal('rl')"
+                class="bg-secondary text-white px-4 py-2 !rounded-button whitespace-nowrap hover:bg-opacity-90"
+              >
+                Access
+              </button>
+              <button
+                onclick="showInfo('rl')"
+                class="border border-secondary text-secondary px-4 py-2 !rounded-button whitespace-nowrap hover:bg-secondary hover:text-white"
+              >
+                Info
+              </button>
+            </div>
+          </div>
+          <div class="algorithm-card p-6 rounded-lg perspective-1000">
+            <div
+              class="w-16 h-16 flex items-center justify-center bg-primary bg-opacity-10 rounded-full mx-auto mb-6 transform-gpu transition-transform duration-300"
+            >
+              <i class="ri-sound-module-line text-primary text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-white mb-4 text-center">
+              Speech Recognition
+            </h3>
+            <p class="text-gray-400 mb-6 text-center">
+              State-of-the-art audio processing and speech-to-text conversion
+            </p>
+            <div class="flex justify-center space-x-4">
+              <button
+                onclick="showModal('speech')"
+                class="bg-primary text-white px-4 py-2 !rounded-button whitespace-nowrap hover:bg-opacity-90"
+              >
+                Access
+              </button>
+              <button
+                onclick="showInfo('speech')"
+                class="border border-primary text-primary px-4 py-2 !rounded-button whitespace-nowrap hover:bg-primary hover:text-white"
+              >
+                Info
+              </button>
+            </div>
+          </div>
+          <div class="algorithm-card p-6 rounded-lg perspective-1000">
+            <div
+              class="w-16 h-16 flex items-center justify-center bg-secondary bg-opacity-10 rounded-full mx-auto mb-6"
+            >
+              <i class="ri-emotion-line text-secondary text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-white mb-4 text-center">
+              Sentiment Analysis
+            </h3>
+            <p class="text-gray-400 mb-6 text-center">
+              Advanced emotion detection and opinion mining algorithms
+            </p>
+            <div class="flex justify-center space-x-4">
+              <button
+                onclick="showModal('sentiment')"
+                class="bg-secondary text-white px-4 py-2 !rounded-button whitespace-nowrap hover:bg-opacity-90"
+              >
+                Access
+              </button>
+              <button
+                onclick="showInfo('sentiment')"
+                class="border border-secondary text-secondary px-4 py-2 !rounded-button whitespace-nowrap hover:bg-secondary hover:text-white"
+              >
+                Info
+              </button>
+            </div>
+          </div>
+          <div class="algorithm-card p-6 rounded-lg perspective-1000">
+            <div
+              class="w-16 h-16 flex items-center justify-center bg-primary bg-opacity-10 rounded-full mx-auto mb-6 transform-gpu transition-transform duration-300"
+            >
+              <i class="ri-group-line text-primary text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-white mb-4 text-center">
+              Recommendation Systems
+            </h3>
+            <p class="text-gray-400 mb-6 text-center">
+              Personalized content and product recommendation engines
+            </p>
+            <div class="flex justify-center space-x-4">
+              <button
+                onclick="showModal('recsys')"
+                class="bg-primary text-white px-4 py-2 !rounded-button whitespace-nowrap hover:bg-opacity-90"
+              >
+                Access
+              </button>
+              <button
+                onclick="showInfo('recsys')"
+                class="border border-primary text-primary px-4 py-2 !rounded-button whitespace-nowrap hover:bg-primary hover:text-white"
+              >
+                Info
+              </button>
+            </div>
+          </div>
+          <div class="algorithm-card p-6 rounded-lg perspective-1000">
+            <div
+              class="w-16 h-16 flex items-center justify-center bg-secondary bg-opacity-10 rounded-full mx-auto mb-6"
+            >
+              <i class="ri-shield-check-line text-secondary text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-white mb-4 text-center">
+              Anomaly Detection
+            </h3>
+            <p class="text-gray-400 mb-6 text-center">
+              Intelligent systems for identifying unusual patterns and outliers
+            </p>
+            <div class="flex justify-center space-x-4">
+              <button
+                onclick="showModal('anomaly')"
+                class="bg-secondary text-white px-4 py-2 !rounded-button whitespace-nowrap hover:bg-opacity-90"
+              >
+                Access
+              </button>
+              <button
+                onclick="showInfo('anomaly')"
+                class="border border-secondary text-secondary px-4 py-2 !rounded-button whitespace-nowrap hover:bg-secondary hover:text-white"
+              >
+                Info
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div id="modal" class="modal">
+      <div class="fixed inset-0 flex items-center justify-center">
+        <div
+          class="bg-[#1a1a2e] backdrop-blur-lg border border-white/10 rounded-lg p-8 max-w-md w-full mx-4 transform-gpu transition-all duration-300 hover:scale-105"
+        >
+          <h3 class="text-2xl font-bold text-white mb-4" id="modalTitle"></h3>
+          <p class="text-gray-400 mb-6" id="modalContent"></p>
+          <div class="flex justify-end">
+            <button
+              onclick="closeModal()"
+              class="bg-gray-200 text-gray-800 px-4 py-2 !rounded-button whitespace-nowrap hover:bg-gray-300"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      const modalData = {
+        neural: {
+          title: "Neural Networks",
+          content:
+            "Our neural network algorithms provide state-of-the-art solutions for pattern recognition, classification, and prediction tasks. Built with the latest deep learning architectures.",
+        },
+        ml: {
+          title: "Machine Learning",
+          content:
+            "Advanced machine learning algorithms for automated data analysis, feature extraction, and predictive modeling. Perfect for business intelligence and data science applications.",
+        },
+        vision: {
+          title: "Computer Vision",
+          content:
+            "Cutting-edge computer vision algorithms for image processing, object detection, and scene understanding. Ideal for autonomous systems and visual recognition tasks.",
+        },
+        nlp: {
+          title: "Natural Language Processing",
+          content:
+            "Advanced NLP algorithms for text analysis, sentiment analysis, and language understanding. Perfect for chatbots and text processing applications.",
+        },
+        data: {
+          title: "Data Mining",
+          content:
+            "Powerful data mining algorithms for discovering patterns and insights in large datasets. Ideal for business intelligence and market research.",
+        },
+        rl: {
+          title: "Reinforcement Learning",
+          content:
+            "Advanced reinforcement learning algorithms for optimal decision-making and policy optimization. Perfect for gaming and robotics applications.",
+        },
+        speech: {
+          title: "Speech Recognition",
+          content:
+            "State-of-the-art speech recognition algorithms for converting spoken language into text. Ideal for voice assistants and transcription services.",
+        },
+        sentiment: {
+          title: "Sentiment Analysis",
+          content:
+            "Advanced sentiment analysis algorithms for detecting emotions and opinions in text. Perfect for social media monitoring and customer feedback analysis.",
+        },
+        recsys: {
+          title: "Recommendation Systems",
+          content:
+            "Intelligent recommendation algorithms for personalizing content and product suggestions. Ideal for e-commerce and content platforms.",
+        },
+        anomaly: {
+          title: "Anomaly Detection",
+          content:
+            "Sophisticated algorithms for identifying unusual patterns and outliers in data. Perfect for fraud detection and system monitoring.",
+        },
+      };
+      function showModal(type) {
+        const modal = document.getElementById("modal");
+        const modalTitle = document.getElementById("modalTitle");
+        const modalContent = document.getElementById("modalContent");
+        modalTitle.textContent = modalData[type].title;
+        modalContent.textContent = modalData[type].content;
+        modal.style.display = "block";
+      }
+      function showInfo(type) {
+        showModal(type);
+      }
+      function closeModal() {
+        document.getElementById("modal").style.display = "none";
+      }
+      window.onclick =
+        function (event) {
+          const modal = document.getElementById("modal");
+          if (event.target == modal) {
+            modal.style.display = "none";
+          }
+        } <
+        script >
+        document.addEventListener("scroll", () => {
+          const section = document.getElementById("algorithmSection");
+          const cards = section.querySelectorAll(".algorithm-card");
+          const scrolled = window.pageYOffset;
+          const rate = scrolled * 0.05;
+          cards.forEach((card, index) => {
+            const delay = index * 0.1;
+            const yPos = scrolled * 0.1 * Math.cos(delay);
+            const zPos = Math.sin(scrolled * 0.003 + delay) * 20;
+            const rotation = Math.sin(scrolled * 0.003 + delay) * 5;
+            card.style.transform = `
+      translateY(${yPos}px)
+      translateZ(${zPos}px)
+      rotateX(${rotation}deg)
+      rotateY(${rotation}deg)
+      `;
+          });
+        });
+    </script>
+  </body>
+</html>

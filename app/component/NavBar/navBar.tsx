@@ -1,13 +1,14 @@
-'use client';
+'use client'
 import React, { useState } from 'react';
 import Logo from './Logo';
 import Link from 'next/link';
 import { FiMenu, FiX } from 'react-icons/fi'; // Hamburger and Close icons
 
+
 const navItems = [
   { name: "Home", href: "/" },
   { name: "Data Structures", href: "./component/Algo_Page" },
-  { name: " AI Algorithm", href: "" },
+  { name: " AI Algorithm", href: "./ai_algorithm/pages/mainpage" },
   { name: "Account", href: "" }
 ];
 

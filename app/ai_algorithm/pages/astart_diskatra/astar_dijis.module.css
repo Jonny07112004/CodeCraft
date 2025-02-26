@@ -1,0 +1,59 @@
+.maze-container {
+    text-align: center;
+    font-family: Arial, sans-serif;
+  }
+  
+.button {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+  }
+  
+.button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(10, 30px);
+    gap: 2px;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .row {
+    display: flex;
+  }
+  
+  .cell {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .cell.start {
+    background-color: green;
+  }
+  
+  .cell.end {
+    background-color: red;
+  }
+  
+  .cell.empty {
+    background-color: white;
+  }
+  
+  .comparison-results {
+    margin-top: 20px;
+    font-size: 18px;
+  }
+  
