@@ -16,7 +16,7 @@
 }
 
 .sidebarLeft, .sidebarRight {
-  width: 20%;
+  width: 25%;
   padding: 20px;
   background-color: #333333; /* Dark gray background */
   border-radius: 10px;
@@ -76,7 +76,7 @@
   font-size: 18px;
   font-weight: bold;
   cursor: pointer;
-  background-color: #4a90e2; /* Blue color for button */
+  background-color: #4a90e2; 
   color: white;
   border: none;
   border-radius: 5px;
@@ -84,11 +84,11 @@
 }
 
 .startBtn:hover, .resetBtn:hover {
-  background-color: #357ab8; /* Darker blue on hover */
+  background-color: #357ab8; 
 }
 
 .startBtn:disabled, .resetBtn:disabled {
-  background-color: #888888; /* Gray when disabled */
+  background-color: #888888; 
   cursor: not-allowed;
 }
 

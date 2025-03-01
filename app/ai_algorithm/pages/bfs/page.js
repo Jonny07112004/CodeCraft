@@ -32,7 +32,7 @@ const BFSVisualizer = () => {
   const [steps, setSteps] = useState([]);
   const [pseudoCodeSteps, setPseudoCodeSteps] = useState([]);
   const [currentStepIndex, setCurrentStepIndex] = useState(-1);
-  const [iterationCount, setIterationCount] = useState(0); // New state for iteration count
+  const [iterationCount, setIterationCount] = useState(0); 
 
   const rows = 10;
   const cols = 10;
@@ -243,7 +243,7 @@ const BFSVisualizer = () => {
             disabled={runningBFS}
           >
             {runningBFS ? 'Running BFS...' : 'Start BFS'}
-          </button>
+          </button>  &nbsp;&nbsp;
           <button
             className={styles.resetBtn}
             onClick={handleReset}

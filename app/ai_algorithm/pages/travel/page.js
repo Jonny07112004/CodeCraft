@@ -1,3 +1,4 @@
+'use client'
 import React, { useState, useEffect } from 'react';
 
 const cities = [
@@ -25,29 +26,53 @@ const cities = [
 
 const connections = [
   { from: 'Oradea', to: 'Zerind', distance: 71 },
+  { from: 'Zerind', to: 'Oradea', distance: 71 },
   { from: 'Oradea', to: 'Sibiu', distance: 151 },
+  { from: 'Sibiu', to: 'Oradea', distance: 151 },
   { from: 'Zerind', to: 'Arad', distance: 75 },
+  { from: 'Arad', to: 'Zerind', distance: 75 },
   { from: 'Arad', to: 'Timisoara', distance: 118 },
+  { from: 'Timisoara', to: 'Arad', distance: 118 },
   { from: 'Timisoara', to: 'Lugoj', distance: 111 },
+  { from: 'Lugoj', to: 'Timisoara', distance: 111 },
   { from: 'Lugoj', to: 'Mehadia', distance: 70 },
+  { from: 'Mehadia', to: 'Lugoj', distance: 70 },
   { from: 'Mehadia', to: 'Drobeta', distance: 75 },
+  { from: 'Drobeta', to: 'Mehadia', distance: 75 },
   { from: 'Drobeta', to: 'Craiova', distance: 120 },
+  { from: 'Craiova', to: 'Drobeta', distance: 120 },
   { from: 'Craiova', to: 'Rimnicu Vilcea', distance: 146 },
+  { from: 'Rimnicu Vilcea', to: 'Craiova', distance: 146 },
   { from: 'Rimnicu Vilcea', to: 'Sibiu', distance: 80 },
-  { from: 'Sibiu', to: 'Fagaras', distance: 99 },
-  { from: 'Fagaras', to: 'Bucharest', distance: 212 },
-  { from: 'Pitesti', to: 'Bucharest', distance: 101 },
-  { from: 'Bucharest', to: 'Giurgiu', distance: 90 },
-  { from: 'Bucharest', to: 'Urziceni', distance: 85 },
-  { from: 'Urziceni', to: 'Hirsova', distance: 98 },
-  { from: 'Hirsova', to: 'Eforie', distance: 86 },
-  { from: 'Arad', to: 'Sibiu', distance: 140 },
   { from: 'Sibiu', to: 'Rimnicu Vilcea', distance: 80 },
+  { from: 'Sibiu', to: 'Fagaras', distance: 99 },
+  { from: 'Fagaras', to: 'Sibiu', distance: 99 },
+  { from: 'Fagaras', to: 'Bucharest', distance: 212 },
+  { from: 'Bucharest', to: 'Fagaras', distance: 212 },
+  { from: 'Pitesti', to: 'Bucharest', distance: 101 },
+  { from: 'Bucharest', to: 'Pitesti', distance: 101 },
+  { from: 'Bucharest', to: 'Giurgiu', distance: 90 },
+  { from: 'Giurgiu', to: 'Bucharest', distance: 90 },
+  { from: 'Bucharest', to: 'Urziceni', distance: 85 },
+  { from: 'Urziceni', to: 'Bucharest', distance: 85 },
+  { from: 'Urziceni', to: 'Hirsova', distance: 98 },
+  { from: 'Hirsova', to: 'Urziceni', distance: 98 },
+  { from: 'Hirsova', to: 'Eforie', distance: 86 },
+  { from: 'Eforie', to: 'Hirsova', distance: 86 },
+  { from: 'Arad', to: 'Sibiu', distance: 140 },
+  { from: 'Sibiu', to: 'Arad', distance: 140 },
+  { from: 'Sibiu', to: 'Rimnicu Vilcea', distance: 80 },
+  { from: 'Rimnicu Vilcea', to: 'Sibiu', distance: 80 },
   { from: 'Rimnicu Vilcea', to: 'Pitesti', distance: 97 },
+  { from: 'Pitesti', to: 'Rimnicu Vilcea', distance: 97 },
   { from: 'Pitesti', to: 'Craiova', distance: 138 },
+  { from: 'Craiova', to: 'Pitesti', distance: 138 },
   { from: 'Iasi', to: 'Neamt', distance: 87 },
+  { from: 'Neamt', to: 'Iasi', distance: 87 },
   { from: 'Neamt', to: 'Vaslui', distance: 92 },
+  { from: 'Vaslui', to: 'Neamt', distance: 92 },
   { from: 'Vaslui', to: 'Urziceni', distance: 142 },
+  { from: 'Urziceni', to: 'Vaslui', distance: 142 },
 ];
 
 const heuristic = (a, b) => {
@@ -285,7 +310,7 @@ const RomaniaMap = () => {
         </div>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '20px', fontFamily: 'Arial, sans-serif', fontSize: '18px', color: '#333', backgroundColor: '#fff', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
           <div style={{ flex: 1, overflowY: 'auto', marginBottom: '20px' }}>
-            <h2 style={{ margin: '0 0 20px', fontSize: '24px', color: '#2c3e50' }}>Traversal Steps</h2>
+            <h2 style={{ margin: '0 0 20px', fontSize: '24px', color: '#d206ec' }}>Traversal Steps</h2>
             <ul style={{ listStyleType: 'none', padding: 0 }}>
               {traversalSteps.map((step, index) => (
                 <li key={index} style={{ margin: '5px 0' }}>{step}</li>
@@ -294,8 +319,8 @@ const RomaniaMap = () => {
             <h3 style={{ margin: '20px 0', fontSize: '24px', color: '#2c3e50' }}>Total Cost: {totalCost}</h3>
           </div>
           <div style={{ flex: 1, overflowY: 'auto' }}>
-            <h2 style={{ margin: '20px 0', fontSize: '24px', color: '#2c3e50' }}>Possible Routes</h2>
-            <h3 style={{ margin: '20px 0', fontSize: '15px', color: '#2c3e50' }}>"Click the route to view possible routes"</h3>
+            <h2 style={{ margin: '20px 0', fontSize: '24px', color: '#d206ec' }}>Possible Routes</h2>
+            <h3 style={{ margin: '20px 0', fontSize: '15px', color: '#d206ec' }}>"Click the route to view possible routes"</h3>
             <ul style={{ listStyleType: 'none', padding: 0, maxHeight: '200px', overflowY: 'scroll' }}>
               {possiblePaths.map((route, index) => (
                 <li
@@ -316,7 +341,7 @@ const RomaniaMap = () => {
 
 const buttonStyle = {
   marginRight: '10px',
-  padding: '10px 20px',
+  padding: '4px 20px',
   fontSize: '16px',
   backgroundColor: '#2c3e50',
   color: '#fff',

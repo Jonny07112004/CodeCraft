@@ -29,7 +29,7 @@
 .heading {
   text-align: center;
   width: 100%;
-  font-size: 30px;
+  font-size: 50px;
   margin-top: 0px;
   color: #f8e71c; /* Yellow color for heading */
 }
@@ -154,7 +154,7 @@
 .buttonContainer {
   display: flex;
   gap: 10px;
-  margin-top: 20px;
+  margin-top: 0px;
 }
 
 .startButton, .resetButton {
