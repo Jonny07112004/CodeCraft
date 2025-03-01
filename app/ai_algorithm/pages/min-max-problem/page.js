@@ -186,6 +186,11 @@ const styles = {
     color: '#fff',
     padding: '40px',
     minHeight: '100vh',
+    width: '100vw',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    overflow: 'none',
   },
   title: {
     textAlign: 'center',
@@ -197,13 +202,19 @@ const styles = {
     color: '#ffd700',
     fontSize: '1.5rem',
     marginBottom: '10px',
+    textAlign: 'center',
   },
   content: {
     display: 'flex',
     justifyContent: 'space-between',
+    width: '100%',
+    maxWidth: '800px',
   },
   section: {
     width: '40%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
   },
   solutionSection: {
     width: '40%',
@@ -215,7 +226,8 @@ const styles = {
   gridContainer: {
     display: 'grid',
     gridTemplateColumns: 'repeat(3, 50px)',
-    gap: '0px', // Ensure no gap between cells
+    gap: '5px',
+    justifyContent: 'center',
   },
   cell: {
     width: '50px',
@@ -255,5 +267,6 @@ const styles = {
   moveText: {
     color: '#ffd700',
     fontSize: '1rem',
+    textAlign: 'center',
   },
 };
