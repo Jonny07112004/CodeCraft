@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
 interface TreeNode {
@@ -59,6 +59,20 @@ const options = [
 
 const BinaryTreeVisualizer = () => {
   const [selectedOption, setSelectedOption] = useState("tree");
+  const [svgWidth, setSvgWidth] = useState(500);
+  const [svgHeight, setSvgHeight] = useState(400);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setSvgWidth(window.innerWidth * 0.8); // Adjust width based on viewport
+      setSvgHeight(window.innerHeight * 0.6); // Adjust height based on viewport
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize(); // Initial call to set the sizes
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const getHighlightedNodes = (): string[] => {
     switch (selectedOption) {
@@ -122,30 +136,37 @@ const BinaryTreeVisualizer = () => {
   };
 
   return (
-    <div className="flex flex-col items-center w-full h-screen bg-gray-900 text-white p-6">
-      <h1 className="text-2xl font-bold mb-4">Binary Tree Visualizer</h1>
+    <div className="flex flex-col items-center justify-center w-full h-screen bg-black text-white p-6">
+      <h1 className="text-4xl font-bold mb-4">Binary Tree Visualizer</h1>
 
-      {/* Selection Controls */}
-      <div className="flex space-x-6 mb-6">
-        <div className="flex flex-col bg-gray-800 p-4 rounded-lg">
-          {options.map((option) => (
-            <label key={option.id} className="flex items-center space-x-2 text-sm mb-2">
-              <input
-                type="radio"
-                name="treeOption"
-                value={option.id}
-                checked={selectedOption === option.id}
-                onChange={() => setSelectedOption(option.id)}
-                className="form-radio"
-              />
-              <span>{option.label}</span>
-            </label>
-          ))}
-        </div>
+      <p className="text-center mb-4 text-2xl">
+        A binary tree is a hierarchical data structure where each node has at most two children, referred to as the left child and the right child. This visualizer highlights different parts of the tree based on your selection.
+      </p>
 
-        {/* Tree Visualization */}
-        <div className="border-2 border-gray-600 rounded-lg p-4 bg-white">
-          <svg width="500" height="400">{renderTree(treeData)}</svg>
+      {/* Tree Visualization and Selection Controls */}
+      <div className="border-2 border-gray-600 rounded-lg p-4 bg-gray-900 max-w-4xl mx-auto">
+        <div className="flex flex-col md:flex-row md:space-x-6">
+          <div className="flex flex-col bg-gray-800 p-4 rounded-lg mb-4 md:mb-0">
+            {options.map((option) => (
+              <label key={option.id} className="flex items-center space-x-2 text-sm mb-2">
+                <input
+                  type="radio"
+                  name="treeOption"
+                  value={option.id}
+                  checked={selectedOption === option.id}
+                  onChange={() => setSelectedOption(option.id)}
+                  className="form-radio"
+                />
+                <span>{option.label}</span>
+              </label>
+            ))}
+          </div>
+
+          <div className="flex-1">
+            <svg width={svgWidth} height={svgHeight}>
+              {renderTree(treeData)}
+            </svg>
+          </div>
         </div>
       </div>
     </div>

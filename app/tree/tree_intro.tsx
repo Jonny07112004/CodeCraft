@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -54,31 +55,33 @@ const App: React.FC = () => {
     );
 
     return (
-        <div className="min-h-screen bg-black text-white flex items-center justify-center p-8  gap-8 flex flex-row">
-            <div className='border-2 border-gray-800 p-4 rounded-lg width-[30vw] hight-[80vh] flex flex-col items-center justify-center gap-8'>
-                <h1 className='text-4xl font-bold'>Trees</h1>
-                <p>The Tree data structure is similar to Linked Lists in that each node contains data and can be linked
-                to other nodes.
+        <div className="min-h-screen bg-black text-white flex flex-col md:flex-row items-center justify-center p-4 gap-4 w-100vw">
+            <div className="border-2 border-gray-800 p-4 rounded-lg w-full md:w-1/3 h-auto md:h-[80vh] flex flex-col items-center justify-center gap-4">
+                <h1 className="text-4xl font-bold">Trees</h1>
+                <p className="text-center">
+                    The Tree data structure is similar to Linked Lists in that each node contains data and can be linked
+                    to other nodes.
                 </p>
-                <p>
-                We have previously covered data structures like Arrays, Linked Lists, Stacks, and Queues. These are all
-                linear structures, which means that each element follows directly after another in a sequence.
-                Trees however, are different. In a Tree, a single element can have multiple 'next' elements,
-                allowing the data structure to branch out in various directions.
+                <p className="text-center">
+                    We have previously covered data structures like Arrays, Linked Lists, Stacks, and Queues. These are all
+                    linear structures, which means that each element follows directly after another in a sequence.
+                    Trees, however, are different. In a Tree, a single element can have multiple 'next' elements,
+                    allowing the data structure to branch out in various directions.
                 </p>
-                <p>
-                The Tree data structure can be useful in many cases:
-
-                    Hierarchical Data: File systems, organizational models, etc.
-                    Databases: Used for quick data retrieval.
-                    Routing Tables: Used for routing data in network algorithms.
-                    Sorting/Searching: Used for sorting data and searching for data.
-                    Priority Queues: Priority queue data structures are commonly implemented using trees, such as binary heaps.
+                <p className="text-center">
+                    The Tree data structure can be useful in many cases:
                 </p>
+                <ul className="list-disc list-inside pl-6">
+                    <li>Hierarchical Data: File systems, organizational models, etc.</li>
+                    <li>Databases: Used for quick data retrieval.</li>
+                    <li>Routing Tables: Used for routing data in network algorithms.</li>
+                    <li>Sorting/Searching: Used for sorting data and searching for data.</li>
+                    <li>Priority Queues: Priority queue data structures are commonly implemented using trees, such as binary heaps.</li>
+                </ul>
             </div>
-            <div className='flex flex-col items-center justify-center gap-6'>
+            <div className="flex flex-col items-center justify-center gap-6 w-full md:w-2/3">
                 <h1 className="text-5xl font-bold mb-4">Tree Terminology</h1>
-                <Card className="p-7 w-[800px] flex gap-12 bg-gray-800 text-white">
+                <Card className="p-7 w-full flex gap-12 bg-gray-800 text-white">
                     <div className="flex-1">
                         <RadioGroup
                             value={selectedOption}
@@ -87,7 +90,7 @@ const App: React.FC = () => {
                         >
                             {treeOptions.map((option) => (
                                 <div key={option.id} className="flex items-center space-x-2">
-                                    <RadioGroupItem value={option.id} id={option.id} className='bg-white' />
+                                    <RadioGroupItem value={option.id} id={option.id} className="bg-white" />
                                     <Label htmlFor={option.id} className="text-sm">
                                         {option.label}
                                     </Label>
@@ -96,7 +99,7 @@ const App: React.FC = () => {
                         </RadioGroup>
                     </div>
                     <div className="flex-1 flex items-center justify-center">
-                        <svg width="400" height="300" viewBox="0 0 400 300" className="w-full h-full">
+                        <svg width="400" height="300" viewBox="0 0 400 300" className="w-full h-full max-w-xs md:max-w-none">
                             <defs>
                                 <marker
                                     id="arrowhead"
