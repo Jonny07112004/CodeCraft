@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Graph Properties Visualizer</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.25.0/cytoscape.min.js"></script>
+  <style>
+    :root {
+      --primary: #4361ee;
+      --secondary: #3f37c9;
+      --background: #f8f9fa;
+      --text: #212529;
+      --light: #e9ecef;
+      --dark: #343a40;
+      --success: #4caf50;
+      --danger: #f44336;
+      --warning: #ff9800;
+      --info: #2196f3;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--background);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    header {
+      background-color: var(--primary);
+      color: white;
+      text-align: center;
+      padding: 1.5rem 0;
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    header p {
+      font-size: 1.1rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .intro {
+      margin-bottom: 2rem;
+    }
+
+    .graph-types-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .graph-type {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .graph-type:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .graph-type-header {
+      background-color: var(--primary);
+      color: white;
+      padding: 1rem;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+
+    .graph-display {
+      height: 220px;
+      width: 100%;
+      background-color: var(--light);
+      position: relative;
+    }
+
+    .graph-info {
+      padding: 1rem;
+    }
+
+    .graph-info h3 {
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+    }
+
+    .graph-info p {
+      font-size: 0.9rem;
+      color: var(--dark);
+    }
+
+    .interactive-section {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .interactive-section h2 {
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 4px;
+      background-color: var(--primary);
+      color: white;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: var(--secondary);
+    }
+
+    .btn.secondary {
+      background-color: var(--light);
+      color: var(--dark);
+    }
+
+    .btn.secondary:hover {
+      background-color: #d1d6db;
+    }
+
+    .drawing-board {
+      height: 500px;
+      width: 100%;
+      background-color: var(--light);
+      border-radius: 8px;
+      position: relative;
+    }
+
+    .tooltip {
+      position: absolute;
+      background-color: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 0.5rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      max-width: 200px;
+      z-index: 100;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .settings-panel {
+      background-color: var(--light);
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 34px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--primary);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+
+    .toggle-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 1rem;
+    }
+
+    .input-group label {
+      margin-bottom: 0.3rem;
+      font-weight: 500;
+    }
+
+    .input-group input, .input-group select {
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+
+    .help-section {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+    }
+
+    .help-section h2 {
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    .help-steps {
+      list-style-type: none;
+    }
+
+    .help-steps li {
+      margin-bottom: 1rem;
+      padding-left: 1.5rem;
+      position: relative;
+    }
+
+    .help-steps li:before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--primary);
+    }
+
+    footer {
+      background-color: var(--dark);
+      color: white;
+      text-align: center;
+      padding: 1.5rem 0;
+      margin-top: 3rem;
+    }
+
+    @media (max-width: 768px) {
+      .graph-types-container {
+        grid-template-columns: 1fr;
+      }
+
+      .controls {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Interactive Graph Properties Visualizer</h1>
+    <p>Explore different types of graphs, their properties, and create your own custom graphs</p>
+  </header>
+
+  <main>
+    <section class="intro">
+      <h2>Understanding Graph Theory</h2>
+      <p>Graph theory is a mathematical discipline that studies relationships between objects. These relationships are represented using vertices (nodes) and edges. This interactive tool helps you explore various graph types and their properties.</p>
+    </section>
+
+    <section id="graph-types">
+      <h2>Graph Types</h2>
+      <div class="graph-types-container">
+        <!-- Directed Graph -->
+        <div class="graph-type">
+          <div class="graph-type-header">Directed Graph</div>
+          <div id="directed-graph" class="graph-display"></div>
+          <div class="graph-info">
+            <h3>Directed Graph</h3>
+            <p>A graph in which edges have directions. Each edge is represented by an arrow pointing from one vertex to another.</p>
+            <p><strong>Use Cases:</strong> Flow networks, dependencies, hierarchical structures.</p>
+          </div>
+        </div>
+
+        <!-- Undirected Graph -->
+        <div class="graph-type">
+          <div class="graph-type-header">Undirected Graph</div>
+          <div id="undirected-graph" class="graph-display"></div>
+          <div class="graph-info">
+            <h3>Undirected Graph</h3>
+            <p>A graph in which edges have no direction. The relationship between vertices is symmetric.</p>
+            <p><strong>Use Cases:</strong> Social networks, computer networks, molecular structures.</p>
+          </div>
+        </div>
+
+        <!-- Cyclic Graph -->
+        <div class="graph-type">
+          <div class="graph-type-header">Cyclic Graph</div>
+          <div id="cyclic-graph" class="graph-display"></div>
+          <div class="graph-info">
+            <h3>Cyclic Graph</h3>
+            <p>A graph that contains at least one cycle - a path that starts and ends at the same vertex.</p>
+            <p><strong>Use Cases:</strong> Circuit analysis, resource allocation, transportation networks.</p>
+          </div>
+        </div>
+
+        <!-- Acyclic Graph -->
+        <div class="graph-type">
+          <div class="graph-type-header">Acyclic Graph</div>
+          <div id="acyclic-graph" class="graph-display"></div>
+          <div class="graph-info">
+            <h3>Acyclic Graph</h3>
+            <p>A graph that does not contain any cycles. Often used to represent hierarchical structures.</p>
+            <p><strong>Use Cases:</strong> Task scheduling, file systems, project management.</p>
+          </div>
+        </div>
+
+        <!-- Weighted Graph -->
+        <div class="graph-type">
+          <div class="graph-type-header">Weighted Graph</div>
+          <div id="weighted-graph" class="graph-display"></div>
+          <div class="graph-info">
+            <h3>Weighted Graph</h3>
+            <p>A graph where edges have associated values or weights, often represented by edge thickness.</p>
+            <p><strong>Use Cases:</strong> Road networks, cost optimization, network flows.</p>
+          </div>
+        </div>
+
+        <!-- Graph with Loops -->
+        <div class="graph-type">
+          <div class="graph-type-header">Graph with Loops</div>
+          <div id="loop-graph" class="graph-display"></div>
+          <div class="graph-info">
+            <h3>Graph with Loops</h3>
+            <p>A graph containing self-loops - edges that connect vertices to themselves.</p>
+            <p><strong>Use Cases:</strong> State machines, recursive relationships, feedback systems.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="interactive-tool" class="interactive-section">
+      <h2>Graph Drawing Tool</h2>
+      <div class="settings-panel">
+        <div class="toggle-group">
+          <label class="switch">
+            <input type="checkbox" id="directed-toggle">
+            <span class="slider"></span>
+          </label>
+          <span>Directed Graph</span>
+        </div>
+        <div class="toggle-group">
+          <label class="switch">
+            <input type="checkbox" id="weighted-toggle">
+            <span class="slider"></span>
+          </label>
+          <span>Weighted Edges</span>
+        </div>
+        <div class="toggle-group">
+          <label class="switch">
+            <input type="checkbox" id="loop-toggle">
+            <span class="slider"></span>
+          </label>
+          <span>Allow Self-Loops</span>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="control-group">
+          <button id="add-node-btn" class="btn">Add Vertex</button>
+          <button id="add-edge-btn" class="btn">Add Edge</button>
+        </div>
+        <div class="control-group">
+          <button id="remove-node-btn" class="btn secondary">Remove Vertex</button>
+          <button id="remove-edge-btn" class="btn secondary">Remove Edge</button>
+        </div>
+        <div class="control-group">
+          <button id="clear-graph-btn" class="btn secondary">Clear Graph</button>
+        </div>
+      </div>
+
+      <div id="edge-weight-input" style="display: none;" class="input-group">
+        <label for="weight-value">Edge Weight:</label>
+        <input type="number" id="weight-value" min="1" max="10" value="1">
+      </div>
+
+      <div id="drawing-board" class="drawing-board"></div>
+      <div id="tooltip" class="tooltip"></div>
+
+      <div id="graph-properties" style="margin-top: 1rem;">
+        <h3>Current Graph Properties:</h3>
+        <ul>
+          <li>Vertices: <span id="vertex-count">0</span></li>
+          <li>Edges: <span id="edge-count">0</span></li>
+          <li>Is Cyclic: <span id="is-cyclic">No</span></li>
+          <li>Is Connected: <span id="is-connected">No</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="user-guide" class="help-section">
+      <h2>User Guide</h2>
+      <ul class="help-steps">
+        <li><strong>Explore Graph Types:</strong> Browse through the examples to understand different graph properties. Hover over elements to see additional information.</li>
+        <li><strong>Drawing a Graph:</strong> Use the graph drawing tool to create your own graph. First, toggle the desired properties (directed, weighted, loops) using the switches.</li>
+        <li><strong>Adding Vertices:</strong> Click "Add Vertex" button and then click on the drawing board to place a vertex.</li>
+        <li><strong>Adding Edges:</strong> Click "Add Edge" button, then click on a source vertex followed by a destination vertex to create an edge between them.</li>
+        <li><strong>Weighted Edges:</strong> If weighted mode is enabled, you'll be prompted to specify a weight when creating an edge.</li>
+        <li><strong>Removing Elements:</strong> Use the "Remove Vertex" or "Remove Edge" buttons and then click on the element you want to remove.</li>
+        <li><strong>Graph Properties:</strong> The properties panel updates in real-time to show information about your graph.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <p>Interactive Graph Properties Visualizer &copy; 2025</p>
+  </footer>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
