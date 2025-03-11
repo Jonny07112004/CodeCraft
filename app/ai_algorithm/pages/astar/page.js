@@ -161,6 +161,7 @@ const AStarVisualizer = () => {
             ))}
           </svg>
           <button className={styles.startButton} onClick={startAStar}>Start A*</button>
+      
         </div>
         <div className={styles.additionLog}>
           <h3>Addition Log</h3>

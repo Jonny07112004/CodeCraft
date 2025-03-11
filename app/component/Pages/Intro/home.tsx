@@ -221,12 +221,7 @@ animation-delay: 4s;
 `}</style>
                         </div>
                         <div className="flex space-x-4">
-                            <button className="!rounded-button px-8 py-3 bg-gradient-to-r from-[#00F0FF] to-[#9D00FF] hover:opacity-90 transition-opacity text-lg font-semibold whitespace-nowrap">
-                                Get Started
-                            </button>
-                            <button className="!rounded-button px-8 py-3 border-2 border-[#9D00FF] hover:bg-[#9D00FF]/20 transition-colors text-lg font-semibold whitespace-nowrap">
-                                Watch Demo
-                            </button>
+                           
                         </div>
                     </div>
                     <div className="relative h-[500px] transform-style-preserve-3d" ref={chartRef}>

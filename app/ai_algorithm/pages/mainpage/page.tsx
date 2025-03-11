@@ -75,7 +75,7 @@ const App: React.FC = () => {
         "Helps you understand how informed search differs from uninformed search in AI."
       ],
       "icon": "fa-route",
-      "link": "./astar_dijkstra"
+      "link": "./astart_diskatra",
     },
     {
       id: 6,
@@ -119,13 +119,12 @@ const App: React.FC = () => {
       link: "./missionarie",
     },
     {
-      id: 11,
-      title: "8-Puzzle Problem(MIN MAX ALOGORITHIM)",
-      description:
-        "The 8-Puzzle is a classic sliding puzzle that consists of a 3x3 grid with 8 numbered tiles and one empty space. The objective is to arrange the tiles in a specific order by sliding them into the empty space. This problem demonstrates the use of the Minimax algorithm for decision-making and optimization in AI.",
-      icon: "fa-arrows-alt",
-      link: "./min-max-problem",
-    },
+      "id": 11,
+      "title": "Tic-Tac-Toe Problem (MIN MAX ALGORITHM)",
+      "description": "Tic-Tac-Toe is a classic two-player game on a 3x3 grid where players take turns placing 'X' or 'O' with the goal of getting three in a row. This problem demonstrates the use of the Minimax algorithm for decision-making and optimization in AI, allowing the AI to play optimally against a human player.",
+      "icon": "fa-hashtag",
+      "link": "./min-max-problem"
+    }
   ];
 
   const [isSimulating, setIsSimulating] = useState(false);
