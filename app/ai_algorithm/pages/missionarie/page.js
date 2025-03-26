@@ -1,3 +1,4 @@
+'use client'
 import React, { useState } from 'react';
 
 const solutionSteps = [
@@ -11,6 +12,7 @@ const solutionSteps = [
   { left: [0, 2], boat: [2, 0], right: [3, 2] },
   { left: [0, 3], boat: [0, 1], right: [3, 1] },
   { left: [0, 1], boat: [0, 2], right: [3, 3] },
+  { left: [0, 0], boat: [0, 0], right: [3, 3] }, // Final state
 ];
 
 const MissionariesCannibals = () => {
@@ -52,7 +54,7 @@ const MissionariesCannibals = () => {
             <div
               style={{
                 ...styles.boat,
-                transform: `translateX(${step % 2 === 0 ? '10%' : '90%'})`,
+                transform: `translateX(${step % 2 === 0 ? '0%' : '100%'})`,
               }}
             >
               {'🧑'.repeat(solutionSteps[step].boat[0])} {'👹'.repeat(solutionSteps[step].boat[1])}
@@ -80,8 +82,8 @@ const MissionariesCannibals = () => {
       </div>
 
       <div style={styles.controls}>
-        <button style={styles.button} onClick={prevStep}>Previous</button>
-        <button style={styles.button} onClick={nextStep}>Next</button>
+        <button style={styles.button} onClick={prevStep} disabled={step === 0}>Previous</button>
+        <button style={styles.button} onClick={nextStep} disabled={step === solutionSteps.length - 1}>Next</button>
       </div>
     </div>
   );
@@ -95,7 +97,7 @@ const styles = {
     justifyContent: 'center',
     height: '100vh',
     width: '100vw',
-    backgroundColor: '#1a1a1a', // Dark background
+    backgroundColor: '#121212', // Dark background
     padding: '20px',
     color: '#ffffff',
     overflow: 'hidden',
@@ -116,7 +118,7 @@ const styles = {
   rulesContainer: {
     width: '20%',
     height: '100%',
-    backgroundColor: '#333333', // Dark gray
+    backgroundColor: '#1e1e1e', // Dark gray
     padding: '20px',
     borderRadius: '10px',
     color: '#ffffff', // White text
@@ -134,7 +136,7 @@ const styles = {
   leftSide: {
     width: '30%',
     height: '400px',
-    backgroundColor: '#4caf50', // Green
+    backgroundColor: '#2e7d32', // Dark green
     padding: '20px',
     borderRadius: '10px',
     color: '#ffffff', // White text
@@ -152,7 +154,7 @@ const styles = {
   river: {
     width: '40%',
     height: '400px',
-    backgroundColor: '#1aa3ff', // Grass green
+    backgroundColor: '#1e88e5', // Dark blue
     position: 'relative',
     display: 'flex',
     flexDirection: 'column',
@@ -168,7 +170,7 @@ const styles = {
   boat: {
     width: '100px',
     height: '50px',
-    backgroundColor: '#8b4513', // Brown
+    backgroundColor: '#ffb74d', // Orange
     position: 'absolute',
     transition: 'transform 1s ease-in-out',
     borderRadius: '5px',
@@ -179,7 +181,7 @@ const styles = {
   rightSide: {
     width: '30%',
     height: '400px',
-    backgroundColor: '#4caf50', // Green
+    backgroundColor: '#2e7d32', // Dark green
     padding: '20px',
     borderRadius: '10px',
     color: '#ffffff', // White text
@@ -191,7 +193,7 @@ const styles = {
   stepsContainer: {
     width: '20%',
     height: '100%',
-    backgroundColor: '#333333', // Dark gray
+    backgroundColor: '#1e1e1e', // Dark gray
     padding: '20px',
     borderRadius: '10px',
     color: '#ffffff', // White text
@@ -208,7 +210,7 @@ const styles = {
     color: '#ff5722', // Orange
   },
   controls: {
-    marginTop: '-60px', // Adjust position to be a little higher
+    marginTop: '20px', // Adjust position to be a little higher
     display: 'flex',
     justifyContent: 'center',
     gap: '10px',

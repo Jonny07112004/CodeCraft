@@ -1,295 +1,359 @@
-'use client';
+"use client";
 import React, { useState, useEffect } from 'react';
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import Link from 'next/link';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import '@fortawesome/fontawesome-free/css/all.min.css';
-import Link from 'next/link';
 
-const MainApp: React.FC = () => {
+const App: React.FC = () => {
   const [selectedAlgorithm, setSelectedAlgorithm] = useState<string | null>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [dialogContent, setDialogContent] = useState({
+    title: "",
+    description: "",
+  });
+  const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
-    setIsLoaded(true);
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const algorithms = [
     {
       id: 1,
-      title: "Breadth First Search (BFS)",
-      icon: "fa-solid fa-layer-group",
-      description: "Graph traversal algorithm that explores all vertices at the present depth before moving on to vertices at the next depth level.",
-      imageUrl: "https://public.readdy.ai/ai/img_res/f3a5d6437a2dc69ba2ffade316626bc5.jpg",
-      color: "#00FF9D",
-      link:"/bfs"
+      title: "BFS (Breadth-First Search)",
+      description:
+        "A graph traversal algorithm that explores all vertices at the present depth before moving to vertices at the next depth level.",
+      icon: "fa-diagram-project",
+      link: "./bfs",
+      //color: "#00FF9D",
     },
     {
       id: 2,
-      title: "Depth First Search (DFS)",
+      title: "DFS (Depth-First Search)",
+      description:
+        "A graph traversal algorithm that explores as far as possible along each branch before backtracking.",
       icon: "fa-solid fa-arrow-down-long",
-      description: "Graph traversal algorithm that explores as far as possible along each branch before backtracking, ideal for maze solving and path finding.",
-      imageUrl: "https://public.readdy.ai/ai/img_res/701eb0d11d8f8331f6503e845ae58ec5.jpg",
-      color: "#00FF9D",
-      link:"/bfs"
+      link: "./dfs",
+      //color: "#00A3FF",
     },
     {
       id: 3,
-      title: "A* Search Algorithm",
-      icon: "fa-solid fa-star",
-      description: "Efficient pathfinding algorithm that combines the benefits of Dijkstra's algorithm and Best-First Search using heuristic functions.",
-      imageUrl: "https://public.readdy.ai/ai/img_res/fd2b92e0540f2fd656dc57bfd524e012.jpg",
-      color: "#00FF9D",
-      link:"/bfs"
+      title: "A* (A-Star) Algorithm",
+      description:
+        "A pathfinding algorithm that uses heuristics to find the shortest path between nodes in a graph.",
+      icon: "fa-star",
+      link: "./astar",
     },
     {
       id: 4,
-      title: "Min-Max Algorithm",
-      icon: "fa-solid fa-chess",
-      description: "Decision-making algorithm used in two-player games, which minimizes the possible loss for a worst case scenario while maximizing the potential gain.",
-      imageUrl: "https://public.readdy.ai/ai/img_res/5b542319c962c1fab8a0459560aa1b4b.jpg",
-      color: "#00FF9D",
-      link:"/bfs"
+      title: "Comparison of BFS and DFS",
+      description: "What it shows: How BFS and DFS explore networks (graphs) visually.\n\nWhy we compare them: They both explore, but in different ways. Knowing the differences helps you pick the right tool for the job. BFS: best for shortest routes. DFS: best for seeing everything. Helps you learn how networks work.",
+      icon: "fa-code-compare",
+      link: "./bfs_dfs",
     },
     {
-      id: 5,
-      title: "BFS vs DFS Comparison",
-      icon: "fa-solid fa-code-compare",
-      description: "Comparative analysis of Breadth-First Search and Depth-First Search algorithms, highlighting their strengths, weaknesses, and optimal use cases in different scenarios.",
-      imageUrl: "https://public.readdy.ai/ai/img_res/c6784d7d09a651e0007d08f24eb5fb78.jpg",
-      color: "#00FF9D",
-      link:"/bfs"
+      "id": 5,
+      "title": "Comparison of A* and Dijkstra's Algorithms",
+      "description": [
+        "What it shows: How A* and Dijkstra's algorithms find the shortest path in a graph visually.",
+        "Why we compare them: They both find shortest paths, but A* is often faster using a heuristic.",
+        "Knowing the differences helps you pick the most efficient pathfinding algorithm.",
+        "A*: uses a heuristic to guide search.",
+        "Dijkstra's: explores all possible paths from the start.",
+        "Helps you understand how informed search differs from uninformed search in AI."
+      ],
+      "icon": "fa-route",
+      "link": "./astart_diskatra",
     },
     {
       id: 6,
-      title: "A* vs Dijkstra Comparison",
-      icon: "fa-solid fa-code-compare",
-      description: "Detailed comparison between A* and Dijkstra's algorithms, analyzing their performance, heuristic functions, and efficiency in pathfinding applications.",
-      imageUrl: "https://public.readdy.ai/ai/img_res/e5394f4cf71df1c3cffa8f6614735870.jpg",
-      color: "#00FF9D",
-      link:"/bfs"
+      title: "Minimax Algorithm",
+      description:
+        "Decision-making algorithm for minimizing possible loss in worst-case scenarios, commonly used in game theory.",
+      icon: "fa-chess",
+      link: "./minmax",
+      color: "#FF00E5",
     },
     {
       id: 7,
-      title: "N-Queens Problem",
-      icon: "fa-solid fa-chess-queen",
-      description: "Classic chess puzzle that involves placing N queens on an N×N chessboard so that no two queens threaten each other by sharing the same row, column, or diagonal.",
-      imageUrl: "https://public.readdy.ai/ai/img_res/d2bfd1a9b4fa9a7f5ec2bd80efa82f71.jpg",
-      color: "#00FF9D",
-      link:"/bfs"
+      title: "Traveling Salesman Problem",
+      description:
+        "Optimization problem seeking the shortest possible route visiting each city exactly once and returning to the origin.",
+      icon: "fa-route",
+      link: "./travel",
     },
     {
       id: 8,
-      title: "Missionaries and Cannibals",
-      icon: "fa-solid fa-people-group",
-      description: "Classic river crossing puzzle where three missionaries and three cannibals must cross a river using a boat that can carry at most two people, ensuring missionaries are never outnumbered.",
-      imageUrl: "https://public.readdy.ai/ai/img_res/a75b746030b4c0ac7b6a1f81362793db.jpg",
-      color: "#00FF9D",
-      link:"/bfs"
+      title: "Water Jugs Problem",
+      description:
+        "Classic problem involving measuring a specific amount of water using jugs of different capacities.",
+      icon: "fa-glass-water",
+      link: "./jugs",
     },
     {
       id: 9,
-      title: "Water Jugs Problem",
-      icon: "fa-solid fa-glass-water",
-      description: "Classic problem solving puzzle involving measuring specific amounts of water using two jugs of different capacities through filling, emptying, and transferring operations.",
-      imageUrl: "https://public.readdy.ai/ai/img_res/e956c7fb48e3881270d42ed907a8ec4d.jpg",
-      color: "#9D00FF",
-      link:"/bfs"
+      title: "N-Queens Problem",
+      description:
+        "Chess puzzle of placing N queens on an NxN chessboard so that no two queens threaten each other.",
+      icon: "fa-chess-queen",
+      link: "./queens",
     },
     {
       id: 10,
-      title: "Traveling Salesman Problem",
-      icon: "fa-solid fa-route",
-      description: "Classic optimization problem that seeks to find the shortest possible route visiting each city exactly once and returning to the origin city.",
-      imageUrl: "https://public.readdy.ai/ai/img_res/7b2acd4fd07dbbb15d4843636f19874d.jpg",
-      color: "#00FF9D",
-      link:"/bfs"
+      title: "Missionaries and Cannibals",
+      description:
+        "River crossing puzzle demonstrating state space search and constraint satisfaction.",
+      icon: "fa-people-group",
+      link: "./missionarie",
+    },
+    {
+      "id": 11,
+      "title": "Tic-Tac-Toe Problem (MIN MAX ALGORITHM)",
+      "description": "Tic-Tac-Toe is a classic two-player game on a 3x3 grid where players take turns placing 'X' or 'O' with the goal of getting three in a row. This problem demonstrates the use of the Minimax algorithm for decision-making and optimization in AI, allowing the AI to play optimally against a human player.",
+      "icon": "fa-hashtag",
+      "link": "./min-max-problem"
     }
   ];
 
+  const [isSimulating, setIsSimulating] = useState(false);
+
+  const handleTryNow = (algorithm: (typeof algorithms)[0]) => {
+  };
+
+  const handleAbout = (algorithm: (typeof algorithms)[0]) => {
+    setDialogContent({
+      title: algorithm.title,
+      description: Array.isArray(algorithm.description) ? algorithm.description.join(' ') : algorithm.description,
+    });
+    setIsDialogOpen(true);
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-[#0A0A1A] to-black">
-      <div className="h-[600px] relative overflow-hidden mb-16">
-        <img
-          src="https://public.readdy.ai/ai/img_res/8434016cceb089cdd5549491f7132ded.jpg"
-          className={`w-full h-full object-cover transition-transform duration-1000 ${isLoaded ? 'scale-105' : 'scale-100'}`}
-          alt="AI Hero"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/50 to-black/95">
-          <div className="max-w-[1440px] mx-auto px-6 h-full flex flex-col justify-center items-center">
-            <h1
-              className={`text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#00FF9D] via-[#00A3FF] to-[#FF00E5] mb-6 transform transition-all duration-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'} tracking-tight leading-none`}
-              style={{
-                textShadow: '0 0 20px rgba(0, 255, 157, 0.5)',
-                transform: 'perspective(1000px) rotateX(10deg)',
-                animation: 'float 6s ease-in-out infinite, shimmer 3s linear infinite',
-                backgroundSize: '200% auto'
-              }}
-            >
-              AI Algorithms
-            </h1>
-            <p className={`text-gray-300 text-xl max-w-2xl text-center transform transition-all duration-1000 delay-300 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
-              style={{
-                animation: 'pulse 4s ease-in-out infinite'
-              }}>
-              Explore fundamental computer science algorithms with interactive visualizations
-            </p>
-          </div>
-        </div>
-      </div>
+    <div className="min-h-screen bg-black text-white relative overflow-hidden">
       <div
-        className="max-w-[1440px] mx-auto px-6 pb-24 relative"
+        className="absolute inset-0 bg-[url('https://public.readdy.ai/ai/img_res/5b3ed293e2f03215e76c76cd17475a28.jpg')] bg-cover bg-center opacity-20"
         style={{
-          perspective: '4000px',
-          transformStyle: 'preserve-3d',
-          animation: 'float-section 8s ease-in-out infinite',
-          filter: 'contrast(1.1) saturate(1.2)',
-          imageRendering: 'crisp-edges'
+          transform: `translateY(${scrollY * 0.5}px) scale(${1 + scrollY * 0.001})`,
         }}
-      >
-        <h2
-          className={`text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#00FF9D] via-[#00A3FF] to-[#FF00E5] mb-4 text-center transform transition-all duration-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
+      />
+      <div className="h-[600px] relative overflow-hidden mb-20">
+        <div
+          className="absolute inset-0 bg-[url('https://public.readdy.ai/ai/img_res/5c652b6dcddadd9c102aec5dae6035e6.jpg')] bg-cover bg-[center_right_-200px]"
           style={{
-            transform: 'perspective(1000px) rotateX(10deg)',
-            animation: 'float3d 6s ease-in-out infinite',
-            textShadow: '0 0 20px rgba(0, 255, 157, 0.3)'
+            transform: `translateY(${scrollY * 0.3}px) scale(${1 + scrollY * 0.0005})`,
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[rgba(0,0,0,0.7)] to-black"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,255,157,0.1)_0%,transparent_100%)] animate-pulse-slow"></div>
+        <div
+          className="container mx-auto px-4 relative h-full flex flex-col justify-center"
+          style={{
+            transform: `translateY(${scrollY * 0.2}px)`,
           }}
         >
-          AI Algorithm Collection
+          <h1 className="text-8xl font-bold mb-6 bg-gradient-to-r from-[#00FF9D] via-[#00A3FF] to-[#FF00E5] bg-clip-text text-transparent animate-float">
+            AI Algorithm
+          </h1>
+          <p className="text-2xl text-[#00FF9D] max-w-2xl leading-relaxed transform hover:scale-105 transition-transform duration-500">
+            Interactive demonstrations of fundamental computer science
+            algorithms and problem-solving techniques
+          </p>
+        </div>
+      </div>
+      <div className="container mx-auto px-4 relative z-10">
+        <h2
+          className="text-4xl font-bold mb-8 bg-gradient-to-r from-[#00FF9D] via-[#00A3FF] to-[#FF00E5] bg-clip-text text-transparent animate-pulse-slow"
+          style={{
+            transform: `translateX(${Math.min(0, -100 + scrollY * 0.5)}px) translateY(${Math.sin(scrollY * 0.01) * 10}px)`,
+            opacity: Math.min(1, scrollY / 500),
+          }}
+        >
+          Algorithm Collection
         </h2>
-        <p className={`text-gray-400 text-lg mb-12 text-center transform transition-all duration-1000 delay-200 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-          Explore our comprehensive suite of advanced artificial intelligence algorithms
+        <p className="text-xl text-[#666666] mb-16 animate-float">
+          Explore our comprehensive suite of classical and modern algorithms
+          with interactive visualizations
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-          {[{
-            id: 1,
-            title: "BFS Modified",
-            icon: "fa-solid fa-diagram-project",
-            description: "An enhanced version of Breadth-First Search algorithm with advanced visualization capabilities. Features real-time node exploration, level-wise traversal tracking, and interactive path highlighting.",
-            imageUrl: "https://public.readdy.ai/ai/img_res/1a812745cf0c0020976b67952f9f9126.jpg",
-            color: "#00FF9D",
-            features: [
-              "Real-time node exploration",
-              "Level-wise traversal tracking",
-              "Interactive path highlighting",
-              "Performance metrics display",
-              "Custom graph input support",
-              "Animation speed control",
-              "Step-by-step execution",
-              "Visual state management"
-            ]
-          }, ...algorithms.slice(1)].map((algorithm, index) => (
+        <div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 perspective-1000"
+          style={{
+            transform: `translateY(${Math.sin(scrollY * 0.02) * 5}px)`,
+            transition: "transform 0.3s ease-out",
+          }}
+        >
+          {algorithms.map((algorithm, index) => (
             <Card
               key={algorithm.id}
-              className={`relative group bg-[#0A0A0A]/80 border-[#1A1A1A] hover:border-[${algorithm.color}] transition-all duration-500 transform hover:scale-105 hover:shadow-[0_0_30px_rgba(0,255,157,0.2)] backdrop-blur-xl card-3d ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}
+              className="relative group bg-[#0A0A0A] hover:bg-[#1A1A1A] border border-[#1A1A1A] hover:border-[#00FF9D] transition-all duration-500 rounded-xl overflow-hidden transform hover:-translate-y-2 hover:shadow-[0_0_30px_rgba(0,255,157,0.2)] hover:scale-105"
               style={{
-                transitionDelay: `${index * 100}ms`,
-                transform: `perspective(1000px) rotateX(0deg)`,
-                animation: `float-card-${index} 6s ease-in-out infinite`,
-                animationDelay: `${index * 0.2}s`
+                transform: `
+perspective(1000px)
+rotateX(0deg)
+translateY(${Math.max(0, 100 - scrollY * 0.5)}px)
+scale(${1 + Math.sin(scrollY * 0.01 + index) * 0.02})
+`,
+                opacity: Math.min(1, (scrollY - 200) / 500),
+                transition: `all 0.5s ease-out ${index * 0.1}s`,
+                animation: `float ${3 + index * 0.5}s ease-in-out infinite`,
+                animationDelay: `${index * 0.2}s`,}}
+              onMouseMove={(e) => {
+                const card = e.currentTarget;
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = (y - centerY) / 20;
+                const rotateY = (centerX - x) / 20;
+                const distance = Math.sqrt(
+                  Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2),
+                );
+                const maxDistance = Math.sqrt(
+                  Math.pow(rect.width / 2, 2) + Math.pow(rect.height / 2, 2),
+                );
+                const glowIntensity = (1 - distance / maxDistance) * 0.5;
+                card.style.transform = `
+perspective(1000px)
+rotateX(${rotateX}deg)
+rotateY(${rotateY}deg)
+scale(${1 + glowIntensity * 0.1})
+`;
+                card.style.boxShadow = `
+0 0 ${30 + glowIntensity * 50}px ${glowIntensity * 0.7}px rgba(0, 255, 157, ${0.2 + glowIntensity * 0.3}),
+inset 0 0 ${20 + glowIntensity * 30}px ${glowIntensity * 0.5}px rgba(0, 255, 157, ${0.1 + glowIntensity * 0.2})
+`;
+                card.style.borderColor = `rgba(0, 255, 157, ${0.3 + glowIntensity * 0.7})`;
+              }}
+              onMouseLeave={(e) => {
+                const card = e.currentTarget;
+                card.style.transform =
+                  "perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)";
+                card.style.boxShadow = "none";
+                card.style.borderColor = "#1A1A1A";
               }}
             >
-              <div className="p-8 flex flex-col items-center text-center">
-                <div className={`w-20 h-20 rounded-full bg-[#1A1A1A] flex items-center justify-center mb-6 transform transition-transform duration-500 group-hover:scale-110 relative before:content-[''] before:absolute before:w-full before:h-full before:rounded-full before:bg-[${algorithm.color}] before:opacity-0 before:transition-opacity before:duration-500 group-hover:before:opacity-20 icon-3d after:content-[''] after:absolute after:w-full after:h-full after:rounded-full after:border-2 after:border-[${algorithm.color}] after:opacity-0 after:transition-opacity after:duration-500 group-hover:after:opacity-50 after:animate-ping`}
-                  style={{
-                    animation: algorithm.id === 1 ? 'bfs-icon-animation 4s ease-in-out infinite' : `float-icon-${algorithm.id} 4s ease-in-out infinite`,
-                    animationDelay: '0.2s'
-                  }}
-                >
-                  <i className={`${algorithm.icon} text-4xl text-[${algorithm.color}] transition-all duration-500 group-hover:scale-110`}></i>
-                </div>
-                <h3 className="text-2xl font-semibold text-white mb-4 transition-colors duration-500 group-hover:text-[#00FF9D]">
-                  {algorithm.title}
-                </h3>
-                <p className="text-gray-400 mb-8 text-sm leading-relaxed">
-                  {algorithm.description}
-                </p>
-                <div className="flex gap-4 w-full">
-                  <Button
-                    className={`!rounded-button flex-1 bg-[#1A1A1A] hover:bg-[${algorithm.color}]/20 text-white border border-[#333] hover:border-[${algorithm.color}] whitespace-nowrap text-sm transition-all duration-500 transform hover:scale-105 ${algorithm.id === 1 ? 'animate-pulse' : ''}`}
-                    onClick={() => {
-                      setSelectedAlgorithm(algorithm.title);
-                      if (algorithm.id === 1) {
-                        const dialog = document.createElement('dialog');
-                        dialog.className = 'fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center';
-                        dialog.innerHTML = `
-<div class="bg-[#0A0A0A] p-8 rounded-xl border border-[#1A1A1A] max-w-2xl w-full">
-<h3 class="text-2xl font-bold text-[#00FF9D] mb-6">BFS Visualization Steps</h3>
-<div class="space-y-4">
-${['Start at root node', 'Visit all neighbors at current level', 'Queue unvisited neighbors', 'Move to next level', 'Repeat until all nodes visited', 'Track visited nodes', 'Build level-order traversal', 'Complete BFS traversal'].map((step, i) => `
-<div class="flex items-center space-x-4 text-white">
-<span class="w-8 h-8 rounded-full bg-[#1A1A1A] flex items-center justify-center text-[#00FF9D]">${i + 1}</span>
-<p>${step}</p>
-</div>
-`).join('')}
-</div>
-<div class="mt-8 grid grid-cols-4 gap-4 bg-[#1A1A1A] p-4 rounded-xl">
-${Array(16).fill('').map((_, i) => `
-<div class="aspect-square bg-[#2A2A2A] rounded-lg flex items-center justify-center text-[#00FF9D] text-xl font-bold">
-${i + 1}
-</div>`).join('')}
-</div>
-<button class="mt-8 px-6 py-2 bg-[#1A1A1A] text-white rounded-full hover:bg-[#00FF9D]/20 border border-[#333] hover:border-[#00FF9D] transition-all"
-onclick="this.closest('dialog').remove()">Close</button>
-</div>
-`;
-                        document.body.appendChild(dialog);
-                        dialog.showModal();
-                      } else if (algorithm.id === 10) {
-                        console.log("Starting BFS visualization");
-                      }
+              <div className="p-8 h-[360px] flex flex-col justify-between relative">
+                <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-[#00FF9D]/10 via-[#00A3FF]/10 to-[#FF00E5]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div>
+                  <div
+                    className="w-20 h-20 mb-6 mx-auto transform group-hover:scale-110 transition-transform duration-500"
+                    style={{
+                      animation: "spin 10s linear infinite",
+                      animationDelay: `${index * 0.3}s`,
                     }}
                   >
-                    {algorithm.id === 1 ? 'Visualize BFS' : 'Access'}
-                    {/*<Link  key={index} href={algorithm.link}></Link>*/}
+                    <div className="w-full h-full rounded-full bg-[#1A1A1A] flex items-center justify-center border border-[#00FFFF]/30 group-hover:border-[#00FFFF] transition-all duration-500 shadow-[0_0_20px_rgba(0,255,255,0.2)]">
+                      <i
+                        className={`fas ${algorithm.icon} text-4xl text-[#00FFFF] transform group-hover:rotate-[360deg] transition-transform duration-1000`}
+                      ></i>
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-bold mb-3 text-center bg-gradient-to-r from-[#00FF9D] via-[#00A3FF] to-[#FF00E5] bg-clip-text text-transparent">
+                    {algorithm.title}
+                  </h3>
+                  <p className="text-[#666666] text-sm text-center line-clamp-3 leading-relaxed">
+                    {algorithm.description}
+                  </p>
+                </div>
+                <div className="flex gap-4 mt-6">
+                  <Link href={algorithm.link}>
+                    <Button
+                      className="!rounded-button flex-1 bg-[#00FF9D]/5 hover:bg-[#00FF9D]/10 text-[#00FF9D] border border-[#00FF9D] relative overflow-hidden group transition-all duration-500 hover:scale-105"
+                    >
+                      <span className="absolute inset-0 bg-gradient-to-r from-[#00FF9D]/20 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
+                      <span className="absolute inset-0 bg-[#00FF9D]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></span>
+                      <span className="relative z-10 flex items-center justify-center gap-2">
+                        Try Now
+                        <i className="fas fa-arrow-right transform group-hover:translate-x-1 transition-transform duration-300"></i>
+                      </span>
+                    </Button>
+                  </Link>
+                  <Button
+                    onClick={() => handleAbout(algorithm)}
+                    className="!rounded-button flex-1 bg-[#00FFFF]/5 hover:bg-[#00FFFF]/10 text-[#00FFFF] border border-[#00FFFF] relative overflow-hidden group transition-all duration-500 hover:scale-105"
+                  >
+                    <span className="absolute inset-0 bg-gradient-to-r from-[#00FFFF]/20 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
+                    <span className="absolute inset-0 bg-[#00FFFF]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></span>
+                    <span className="relative z-10 flex items-center justify-center gap-2">
+                      About
+                      <i className="fas fa-info-circle transform group-hover:rotate-12 transition-transform duration-300"></i>
+                    </span>
                   </Button>
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className="!rounded-button flex-1 bg-transparent border-[#333] text-[#666] hover:bg-[#1A1A1A] hover:text-white whitespace-nowrap text-sm transition-all duration-500 transform hover:scale-105"
-                      >
-                        Info
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="bg-[#0A0A0A] text-white border-[#1A1A1A] backdrop-blur-xl">
-                      <DialogHeader>
-                        <DialogTitle className={`text-2xl font-bold text-[${algorithm.color}]`}>
-                          {algorithm.title}
-                        </DialogTitle>
-                        <DialogDescription className="text-gray-400 mt-4">
-                          {algorithm.description}
-                          {algorithm.id === 1 && (
-                            <div className="mt-4 space-y-2">
-                              <p className="text-[#00FF9D]">BFS Properties:</p>
-                              <ul className="list-disc list-inside space-y-1">
-                                <li>Complete algorithm</li>
-                                <li>Optimal for unweighted graphs</li>
-                                <li>Time complexity: O(V + E)</li>
-                                <li>Space complexity: O(V)</li>
-                                <li>Uses queue data structure</li>
-                              </ul>
-                            </div>
-                          )}
-                        </DialogDescription>
-                      </DialogHeader>
-                    </DialogContent>
-                  </Dialog>
                 </div>
               </div>
             </Card>
           ))}
         </div>
       </div>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="bg-[#0A0A0A] text-white border-2 border-[#1A1A1A] shadow-[0_0_30px_rgba(0,255,157,0.2)]">
+          <DialogHeader>
+            <DialogTitle className="text-2xl bg-gradient-to-r from-[#00FF9D] via-[#00A3FF] to-[#FF00E5] bg-clip-text text-transparent font-bold flex items-center gap-3">
+              {dialogContent.title}
+              {isSimulating && (
+                <div className="inline-block w-4 h-4 border-2 border-[#00FF9D] border-t-transparent rounded-full animate-spin"></div>
+              )}
+            </DialogTitle>
+            <DialogDescription className="text-[#666666] mt-4 leading-relaxed">
+              {dialogContent.description}
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+      <style jsx global>{`
+@keyframes float {
+0% { transform: translateY(0px); }
+50% { transform: translateY(-20px); }
+100% { transform: translateY(0px); }
+}
+@keyframes glow {
+0% { box-shadow: 0 0 5px rgba(0, 255, 157, 0.2); }
+50% { box-shadow: 0 0 20px rgba(0, 255, 157, 0.4); }
+100% { box-shadow: 0 0 5px rgba(0, 255, 157, 0.2); }
+}
+@keyframes spin {
+from { transform: rotate(0deg); }
+to { transform: rotate(360deg); }
+}
+@keyframes wave {
+0% { transform: translateX(-100%); opacity: 0.2; }
+50% { transform: translateX(0%); opacity: 1; }
+100% { transform: translateX(100%); opacity: 0.2; }
+}
+@keyframes cardHover {
+0% { transform: scale(1); box-shadow: 0 0 0 rgba(0, 255, 157, 0); }
+50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(0, 255, 157, 0.3); }
+100% { transform: scale(1); box-shadow: 0 0 0 rgba(0, 255, 157, 0); }
+}
+.card-hover-effect {
+animation: cardHover 2s ease-in-out infinite;
+}
+.animate-float {
+animation: float 6s ease-in-out infinite;
+}
+.animate-pulse-slow {
+animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+.animate-glow {
+animation: glow 2s ease-in-out infinite;
+}
+.animate-wave {
+animation: wave 3s ease-in-out infinite;
+}
+`}</style>
     </div>
   );
 };
-
-export default MainApp;
+export default App;
