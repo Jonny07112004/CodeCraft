@@ -126,6 +126,7 @@ const App: React.FC = () => {
                             <div className="absolute inset-0 border border-[#9D00FF]/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         </button>
                         </Link>
+                        <Link href={'./login_signup/login'}>
                         <button
                             onClick={() => setShowLoginModal(true)}
                             className="relative px-8 py-3 group !rounded-button whitespace-nowrap backdrop-blur-sm"
@@ -138,6 +139,7 @@ const App: React.FC = () => {
                             <div className="absolute inset-0 ring-2 ring-[#00F0FF] rounded-lg transform scale-105 opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
                             <div className="absolute -inset-1 bg-gradient-to-r from-[#00F0FF]/40 to-[#9D00FF]/40 blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         </button>
+                        </Link>
                     </nav>
                     <button
                         className="md:hidden text-2xl"
@@ -219,15 +221,9 @@ animation-delay: 4s;
 `}</style>
                         </div>
                         <div className="flex space-x-4">
-                            <button className="!rounded-button px-8 py-3 bg-gradient-to-r from-[#00F0FF] to-[#9D00FF] hover:opacity-90 transition-opacity text-lg font-semibold whitespace-nowrap">
-                                Get Started
-                            </button>
-                            <button className="!rounded-button px-8 py-3 border-2 border-[#9D00FF] hover:bg-[#9D00FF]/20 transition-colors text-lg font-semibold whitespace-nowrap">
-                                Watch Demo
-                            </button>
+                           
                         </div>
                     </div>
-                    
                 </div>
             </section>
             {/* Features Section */}
@@ -294,34 +290,6 @@ animation-delay: 4s;
             <div className="fixed bottom-1/4 left-20 w-3 h-3 bg-[#00F0FF] rounded-full animate-pulse opacity-75"></div>
             <div className="fixed bottom-1/3 right-20 w-5 h-5 bg-[#9D00FF] rounded-full animate-ping opacity-75"></div>
             {/* Login Modal */}
-            {showLoginModal && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-                    <div className="bg-[#0A0A0F] p-8 rounded-2xl border border-[#9D00FF]/20 w-full max-w-md">
-                        <div className="flex justify-between items-center mb-6">
-                            <h3 className="text-2xl font-bold">Sign In</h3>
-                            <button
-                                onClick={() => setShowLoginModal(false)}
-                                className="text-gray-400 hover:text-white"
-                            >
-                                <i className="fas fa-times"></i>
-                            </button>
-                        </div>
-                        <input
-                            type="email"
-                            placeholder="Email"
-                            className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 mb-4 focus:outline-none focus:border-[#00F0FF]"
-                        />
-                        <input
-                            type="password"
-                            placeholder="Password"
-                            className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 mb-6 focus:outline-none focus:border-[#00F0FF]"
-                        />
-                        <button className="w-full !rounded-button py-3 bg-gradient-to-r from-[#00F0FF] to-[#9D00FF] hover:opacity-90 transition-opacity font-semibold whitespace-nowrap">
-                            Sign In
-                        </button>
-                    </div>
-                </div>
-            )}
             {/* Mobile Menu */}
             {isMenuOpen && (
                 <div className="fixed inset-0 bg-[#0A0A0F] z-40 md:hidden">

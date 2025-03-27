@@ -47,6 +47,7 @@
     "react-spring": "^9.7.5",
     "reactflow": "^11.11.4",
     "sonner": "^2.0.1",
+    "styled-components": "^6.1.16",
     "swiper": "^11.2.4",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
