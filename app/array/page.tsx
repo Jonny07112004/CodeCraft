@@ -15,6 +15,7 @@ const MainPage = () => {
   const [tracki, settracki] = useState([-1]);
   const [trackk, settrackk] = useState([-1]);
   const [isInsert, setInsert] = useState(false);
+  const [isIndex, setIndex] = useState(false);
   const [isSearch, setSearch] = useState(false);
   const [click, setclick] = useState(false);
   const [isBinary, setBinary] = useState(false);
@@ -148,16 +149,14 @@ const MainPage = () => {
   };
 
   const resetArray = () => {
-    const reArray = [];
+    const reArray = [12, 23, 34, 45, 21, 32, 43, 54];
     setInsert(false);
     setSearch(false);
     settrackk([-1]);
     settracki([-1]);
     settrackj([-1]);
+    setPseudoCode(['']);
     setBinary(false);
-    for (let i = 0; i < 8; i++) {
-      reArray.push(Math.floor(Math.random() * (95 - 10 + 1)) + 10);
-    }
     setarr(reArray);
   };
 
@@ -170,6 +169,22 @@ const MainPage = () => {
       alert("Array can only hold 10 elements or non-zero input is required.");
     }
     inputElement.value = "";
+  };
+
+  const insertAtIndex = () => {
+    const valueElement = document.getElementById("arrayelement") as HTMLInputElement;
+    const indexElement = document.getElementById("arrayindex") as HTMLInputElement;
+    const value = Number(valueElement.value);
+    const index = Number(indexElement.value);
+    if (index >= 0 && index <= arr.length && value !== 0) {
+      const newArray = [...arr];
+      newArray.splice(index, 0, value);
+      setarr(newArray);
+    } else {
+      alert("Invalid index or value.");
+    }
+    valueElement.value = "";
+    indexElement.value = "";
   };
 
   const inputFunc = () => {
@@ -268,7 +283,19 @@ const MainPage = () => {
 
   return (
     <div className="w-full h-screen text-white flex overflow-auto bg-gray-900 p-6">
-      <div className="w-1/2 h-full flex flex-col justify-between">
+      <div className="w-[45vw] h-full flex flex-col justify-start">
+        <h2 className="text-2xl font-semibold mb-4">Pseudo-code</h2>
+        <div className="p-4 bg-gray-700 rounded-lg h-full overflow-auto">
+          <code className="text-gray-300 font-mono whitespace-pre-wrap">
+            {pseudoCode.map((step, index) => (
+              <div key={index} className={currentStep === index ? "text-yellow-300" : ""}>
+                {step}
+              </div>
+            ))}
+          </code>
+        </div>
+      </div>
+      <div className="w-3/4 h-full flex flex-col justify-between">
         <h1 className="text-4xl font-bold mb-4">Array Data Structure</h1>
         <div className="flex flex-row justify-between h-full">
           <div className="flex flex-col items-center justify-start">
@@ -295,7 +322,10 @@ const MainPage = () => {
                 <DropdownMenuContent className="bg-gray-800 text-white">
                   <DropdownMenuLabel>Insertion in Array</DropdownMenuLabel>
                   <DropdownMenuItem>
-                    <button onClick={() => { setarr([]); setInsert(true); setSearch(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-700">Insert Data</button>
+                    <button onClick={() => { setarr([]); setInsert(true); setSearch(false);setIndex(false) }} className="w-full text-left px-4 py-2 hover:bg-gray-700">Insert Data</button>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <button onClick={() => {  setSearch(false); resetArray(); setIndex(true)}} className="w-full text-left px-4 py-2 hover:bg-gray-700">Insert at Specified Index</button>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -318,7 +348,6 @@ const MainPage = () => {
               <button onClick={resetArray} className={`bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-700 ${click && "cursor-not-allowed"}`}>Reset</button>
             </div>
           </div>
-          
         </div>
       </div>
       <div className="flex-col items-center justify-center">
@@ -367,6 +396,15 @@ const MainPage = () => {
               <button className="text-xl mx-2 bg-blue-600 rounded-sm p-2" onClick={addElement}>Add</button>
             </div>
           )}
+          {isIndex && (
+            <div className="border-2 border-white w-[50vw] h-[13vh] ml-[2.2vw] rounded-sm mt-[5vh] flex items-center">
+              <p className="mx-2 text-xl">Enter Data</p>
+              <input type="number" placeholder="Number Only" className="input input-bordered mt-1 mx-1 mb-1 text-black" id="arrayelement" name="value" />
+                  <p className="mx-2 text-xl">Enter Index</p>
+                  <input type="number" placeholder="Index" className="input input-bordered mt-1 mx-1 mb-1 text-black" id="arrayindex" name="index" />
+                  <button className="text-xl mx-2 bg-blue-600 rounded-sm p-2" onClick={insertAtIndex}>Insert</button>
+            </div>
+          )}
           {isSearch && (
             <div className="border-2 border-white w-[50vw] h-[13vh] ml-[2.2vw] rounded-sm mt-[5vh] flex items-center">
               <p className="mx-2 text-xl">Enter Data</p>
@@ -379,18 +417,6 @@ const MainPage = () => {
               )}
             </div>
           )}
-        </div>
-        <div className="w-full max-w-4xl bg-gray-800 rounded-lg shadow-lg p-6 mt-4">
-          <h2 className="text-2xl font-semibold mb-4">Pseudo-code</h2>
-          <div className="p-4 bg-gray-700 rounded-lg">
-            <code className="text-gray-300 font-mono whitespace-pre-wrap">
-              {pseudoCode.map((step, index) => (
-                <div key={index} className={currentStep === index ? "text-yellow-300" : ""}>
-                  {step}
-                </div>
-              ))}
-            </code>
-          </div>
         </div>
       </div>
     </div>

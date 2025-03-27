@@ -224,19 +224,6 @@ animation-delay: 4s;
                            
                         </div>
                     </div>
-                    <div className="relative h-[500px] transform-style-preserve-3d" ref={chartRef}>
-                        <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="absolute inset-0 bg-[url('https://public.readdy.ai/ai/img_res/d33a58b6c1a97fbbbef775a5c4f830d7.jpg')] bg-cover bg-center opacity-70"></div>
-                            <div className="absolute inset-0 bg-gradient-to-r from-[#00F0FF]/30 to-[#9D00FF]/30 animate-[neural-pulse_3s_ease-in-out_infinite] backdrop-blur-sm"></div>
-                        </div>
-                        <div className="absolute inset-0 grid grid-cols-4 grid-rows-4 gap-2">
-                            {Array(16).fill(0).map((_, i) => (
-                                <div key={i} className="w-full h-full bg-gradient-to-r from-[#00F0FF]/10 to-[#9D00FF]/10 rounded-lg animate-[floating_4s_ease-in-out_infinite]" style={{
-                                    animationDelay: `${i * 0.2}s`
-                                }}></div>
-                            ))}
-                        </div>
-                    </div>
                 </div>
             </section>
             {/* Features Section */}
