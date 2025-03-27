@@ -65,18 +65,18 @@ const App: React.FC = () => {
       icon: 'fa-circle-nodes',
       link:'/graph'
     },
-    {
-      title: 'Heap Constructor',
-      description: 'Visual representation of heap operations with priority queue implementation.',
-      features: ['Heapify', 'Extract Min/Max', 'Priority Queue'],
-      complexity: 'O(log n)',
-      category: 'Non-linear',
-      icon: 'fa-pyramid',
-      link:'/heap'
-    }
+    // {
+    //   title: 'Heap Constructor',
+    //   description: 'Visual representation of heap operations with priority queue implementation.',
+    //   features: ['Heapify', 'Extract Min/Max', 'Priority Queue'],
+    //   complexity: 'O(log n)',
+    //   category: 'Non-linear',
+    //   icon: 'fa-pyramid',
+    //   link:'/heap'
+    // }
   ];
   const stats = {
-    totalVisualizations: 7,
+    totalVisualizations: 6,
     totalAlgorithms: 35,
   };
   return (
@@ -108,14 +108,14 @@ const App: React.FC = () => {
                   <div className="text-3xl font-bold">{stats.totalVisualizations}</div>
                   <div className="text-blue-200">Visualizations</div>
                 </div>
-                <div>
+                {/*<div>
                   <div className="text-3xl font-bold">{stats.totalAlgorithms}</div>
                   <div className="text-blue-200">Algorithms</div>
-                </div>
+                </div>*/}
               </div>
-              <Button size="lg" className="!rounded-button bg-white text-blue-600 hover:bg-blue-50">
+              {/*<Button size="lg" className="!rounded-button bg-white text-blue-600 hover:bg-blue-50">
                 Try Visualizer
-              </Button>
+              </Button>*/}
             </div>
             <div className="relative h-96">
               <img

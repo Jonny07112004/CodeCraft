@@ -11,9 +11,6 @@ import App from "./component/Pages/Intro/home";
 export default function Home() {
   return (
     <div className="w-full h-screen bg-zinc-950 text-white">
-      {/* <NavBar/>
-      <Intro/>
-      <Marque/> */}
       <App/>
     </div>
   );

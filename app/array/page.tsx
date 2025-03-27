@@ -149,12 +149,13 @@ const MainPage = () => {
   };
 
   const resetArray = () => {
-    const reArray = [12, 23, 34, 45, 21];
+    const reArray = [12, 23, 34, 45, 21, 32, 43, 54];
     setInsert(false);
     setSearch(false);
     settrackk([-1]);
     settracki([-1]);
     settrackj([-1]);
+    setPseudoCode(['']);
     setBinary(false);
     setarr(reArray);
   };
@@ -282,7 +283,7 @@ const MainPage = () => {
 
   return (
     <div className="w-full h-screen text-white flex overflow-auto bg-gray-900 p-6">
-      <div className="w-1/4 h-full flex flex-col justify-start">
+      <div className="w-[45vw] h-full flex flex-col justify-start">
         <h2 className="text-2xl font-semibold mb-4">Pseudo-code</h2>
         <div className="p-4 bg-gray-700 rounded-lg h-full overflow-auto">
           <code className="text-gray-300 font-mono whitespace-pre-wrap">

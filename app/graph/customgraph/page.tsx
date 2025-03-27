@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner"; // Toast notifications for feedback
+import { toast, Toaster } from "sonner"; // Import Toaster along with toast
 
 const GraphVisualization: React.FC = () => {
   const [graphType, setGraphType] = useState("directed");
@@ -72,13 +72,13 @@ const GraphVisualization: React.FC = () => {
       return;
     }
     if (graphType === "weighted") {
-      if (!weight) {
-        toast.error("Weight must be filled for weighted graphs!");
+      if (!weight || isNaN(parseInt(weight))) {
+        toast.error("Weight must be a valid number!");
         return;
       }
       setElements([...elements, { data: { id: `${source}${target}`, source, target, label: weight } }]);
     } else {
-      setElements([...elements, { data: { id: `${source}${target}`, source, target, label: "" } }]);
+      setElements([...elements, { data: { id: `${source}${target}`, source, target, label: "1" } }]);
     }
 
     toast.success(`Edge "${source} → ${target}" added successfully!`);
@@ -108,7 +108,12 @@ const GraphVisualization: React.FC = () => {
       if (el.data.source && el.data.target) {
         const sourceIndex = nodeIndexMap[el.data.source];
         const targetIndex = nodeIndexMap[el.data.target];
-        const weight = graphType === "weighted" ? parseInt(el.data.label) : 1;
+        let weight: number;
+        if (graphType === "weighted") {
+          weight = !el.data.label || isNaN(parseInt(el.data.label)) ? 1 : parseInt(el.data.label);
+        } else {
+          weight = 1;
+        }
         matrix[sourceIndex][targetIndex] = weight;
 
         if (graphType !== "directed") {
@@ -127,26 +132,28 @@ const GraphVisualization: React.FC = () => {
       { data: { id: "B", label: "B" } },
       { data: { id: "C", label: "C" } },
       { data: { id: "D", label: "D" } },
-      { data: { id: "AB", source: "A", target: "B" } },
-      { data: { id: "BC", source: "B", target: "C" } },
-      { data: { id: "CD", source: "C", target: "D" } },
+      { data: { id: "AB", source: "A", target: "B", label: "1" } },
+      { data: { id: "BC", source: "B", target: "C", label: "1" } },
+      { data: { id: "CD", source: "C", target: "D", label: "1" } },
     ];
 
     console.log("Initializing graph with elements:", initialElements);
     setElements(initialElements);
   }, []);
 
-  // Update adjacency matrix whenever elements change
+  // Update adjacency matrix whenever elements or graphType change
   useEffect(() => {
     generateAdjacencyMatrix();
   }, [elements, graphType]);
 
   return (
     <div className="min-h-screen bg-black text-white p-6">
+      {/* Add Toaster component here to render toast notifications */}
+      <Toaster richColors position="top-right" />
       <div className="max-w-6xl mx-auto">
         <Card className="bg-gray-900 border-gray-700">
           <CardHeader>
-            <CardTitle className='text-white'>Graph Visualization</CardTitle>
+            <CardTitle className="text-white">Graph Visualization</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -154,7 +161,7 @@ const GraphVisualization: React.FC = () => {
                 {/* Graph Display */}
                 <CytoscapeComponent
                   elements={elements}
-                  style={{ width: "100%", height: "600px", background: "#222" }} // Increased height
+                  style={{ width: "100%", height: "600px", background: "#222" }}
                   layout={{
                     name: "cose",
                     idealEdgeLength: (edge) => 100,
@@ -184,7 +191,7 @@ const GraphVisualization: React.FC = () => {
                         label: "data(label)",
                         "text-valign": "center",
                         color: "white",
-                        "font-size": "14px", // Increased font size
+                        "font-size": "14px",
                       })
                       .selector("edge")
                       .style({
