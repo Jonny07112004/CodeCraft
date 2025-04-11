@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import React, { useState, useEffect } from "react";
 
 const gridSize = 10;
@@ -22,6 +22,7 @@ const MazeTraversal = () => {
   const [dfsComplete, setDfsComplete] = useState(false);
   const [bfsIterations, setBfsIterations] = useState(0);
   const [dfsIterations, setDfsIterations] = useState(0);
+  const [isRunning, setIsRunning] = useState(false); // New state to track running status
 
   // Calculate dynamic complexity (for this grid, it’s O(V + E) or O(gridSize * gridSize))
   const calculateComplexity = () => {
@@ -41,6 +42,7 @@ const MazeTraversal = () => {
       if (queue.length === 0) {
         setBfsComplete(true);
         setBfsIterations(iterations);
+        setIsRunning(false); // Mark as not running when complete
         return;
       }
       iterations++;
@@ -52,6 +54,7 @@ const MazeTraversal = () => {
         setBfsPath(path);
         setBfsComplete(true);
         setBfsIterations(iterations);
+        setIsRunning(false); // Mark as not running when complete
         return;
       }
 
@@ -79,6 +82,7 @@ const MazeTraversal = () => {
       if (stack.length === 0) {
         setDfsComplete(true);
         setDfsIterations(iterations);
+        setIsRunning(false); // Mark as not running when complete
         return;
       }
       iterations++;
@@ -90,6 +94,7 @@ const MazeTraversal = () => {
         setDfsPath(path);
         setDfsComplete(true);
         setDfsIterations(iterations);
+        setIsRunning(false); // Mark as not running when complete
         return;
       }
 
@@ -107,6 +112,8 @@ const MazeTraversal = () => {
   };
 
   const runBothAlgorithms = () => {
+    if (isRunning) return; // Prevent running if already in progress
+    setIsRunning(true); // Mark as running
     setBfsPath([]);
     setDfsPath([]);
     setBfsComplete(false);
@@ -117,8 +124,24 @@ const MazeTraversal = () => {
     dfs();
   };
 
+  const handleReset = () => {
+    if (isRunning) return; // Prevent reset if running
+    window.location.reload();
+  };
+
+  // Handle click anywhere to trigger runBothAlgorithms
+  const handleContainerClick = (e) => {
+    if (isRunning) return; // Prevent clicks while running
+    // Only trigger if not clicking the reset button
+    if (e.target.tagName !== "BUTTON" || e.target.textContent.includes("Run")) {
+      if (!bfsComplete && !dfsComplete) {
+        runBothAlgorithms();
+      }
+    }
+  };
+
   return (
-    <div style={styles.container}>
+    <div style={styles.container} onClick={handleContainerClick}>
       <div style={styles.headingContainer}>
         <h2 style={styles.title}>✨ DFS vs BFS Maze Traversal ✨</h2>
       </div>
@@ -130,11 +153,11 @@ const MazeTraversal = () => {
           <div key={title} style={styles.gridWrapper}>
             <h3>{title} Traversal</h3>
             <div style={styles.gridAndInfoContainer}>
-              {/* Info Box (Outside the grid, on the side) */}
+              {/* Info Box */}
               <div
                 style={{
                   ...styles.infoBox,
-                  [infoPosition]: "-150px", // Position further outside for larger box
+                  [infoPosition]: "-150px",
                   top: "50%",
                   transform: "translateY(-50%)",
                 }}
@@ -170,10 +193,26 @@ const MazeTraversal = () => {
         ))}
       </div>
       <div style={styles.buttonContainer}>
-        <button onClick={runBothAlgorithms} style={styles.startButton}>
+        <button
+          onClick={runBothAlgorithms}
+          style={{
+            ...styles.startButton,
+            backgroundColor: isRunning ? "#666666" : "#00ff00",
+            cursor: isRunning ? "not-allowed" : "pointer",
+          }}
+          disabled={isRunning}
+        >
           🚀 Run BFS & DFS
         </button>
-        <button onClick={() => window.location.reload()} style={styles.resetButton}>
+        <button
+          onClick={handleReset}
+          style={{
+            ...styles.resetButton,
+            backgroundColor: isRunning ? "#666666" : "#ff00ff",
+            cursor: isRunning ? "not-allowed" : "pointer",
+          }}
+          disabled={isRunning}
+        >
           🔄 Reset
         </button>
       </div>
@@ -189,19 +228,20 @@ const styles = {
     backgroundColor: "#000000",
     color: "white",
     padding: "20px",
-    height: "100vh",
+    minHeight: "100vh",
     width: "100vw",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
+    position: "relative",
+    overflow: "hidden",
   },
   headingContainer: {
-    marginBottom: "150px",
+    marginBottom: "20px",
   },
   title: {
     fontSize: "24px",
-    marginBottom: "70px",
     color: "#00ff00",
   },
   gridContainer: {
@@ -209,12 +249,11 @@ const styles = {
     justifyContent: "center",
     gap: "50px",
     width: "60%",
-    height: "calc(100vh - 100px)",
-    marginTop: "-190px",
+    marginBottom: "20px",
   },
   gridWrapper: {
     textAlign: "center",
-    flex: 2,
+    flex: 1,
     position: "relative",
   },
   gridAndInfoContainer: {
@@ -240,51 +279,49 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
     fontWeight: "bold",
-    transition: "background-color 0.5s ease-in-out, box-shadow 0.5s ease-in-out",
     border: "1px solid rgba(0, 255, 255, 0.2)",
   },
   buttonContainer: {
     display: "flex",
     gap: "20px",
-    marginTop: "-40px",
+    marginTop: "20px",
+    zIndex: 1000,
   },
   startButton: {
     padding: "12px 24px",
     fontSize: "18px",
     fontWeight: "bold",
-    cursor: "pointer",
-    backgroundColor: "#00ff00",
     color: "#000000",
     border: "none",
     borderRadius: "8px",
     boxShadow: "0px 4px 8px rgba(0, 255, 0, 0.4)",
     transition: "background 0.3s, transform 0.2s",
+    zIndex: 1001,
   },
   resetButton: {
     padding: "12px 24px",
     fontSize: "18px",
     fontWeight: "bold",
-    cursor: "pointer",
-    backgroundColor: "#ff00ff",
     color: "#000000",
     border: "none",
     borderRadius: "8px",
     boxShadow: "0px 4px 8px rgba(255, 0, 255, 0.4)",
     transition: "background 0.3s, transform 0.2s",
+    zIndex: 1001,
   },
   infoBox: {
     position: "absolute",
-    padding: "15px", // Increased padding for larger box
+    padding: "15px",
     backgroundColor: "#1a1a1a",
-    borderRadius: "8px", // Slightly larger radius
+    borderRadius: "8px",
     border: "1px solid rgba(0, 255, 255, 0.2)",
-    boxShadow: "0px 0px 8px rgba(0, 255, 255, 0.1)", // Slightly larger shadow
-    width: "140px", // Increased width for larger box
+    boxShadow: "0px 0px 8px rgba(0, 255, 255, 0.1)",
+    width: "140px",
     textAlign: "left",
   },
   infoText: {
-    margin: "4px 0", 
-    fontSize: "16px", 
+    margin: "4px 0",
+    fontSize: "16px",
     color: "#00ffff",
   },
 };

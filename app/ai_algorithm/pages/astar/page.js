@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import React, { useState } from "react";
 import styles from "./a_star.module.css";
 
@@ -21,7 +21,7 @@ const edges = [
 
 const pseudoCodeSteps = [
   "1. Initialize OPEN and CLOSED sets.",
-  "2. Add start node to OPEN with f(n) = h(n).",
+  "2. Add start node to OPEN with 듯(n) = h(n).",
   "3. Pick node with lowest f(n) from OPEN.",
   "4. If goal reached, calculate total cost.",
   "5. Update neighbors: g(n) = sum + cost."
@@ -35,11 +35,13 @@ const AStarVisualizer = () => {
   const [totalCost, setTotalCost] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
   const [additionLog, setAdditionLog] = useState([]);
+  const [isRunning, setIsRunning] = useState(false); // New state to track if A* is running
 
   const handleNodeClick = (nodeId) => {
+    if (isRunning) return; // Prevent node selection while running
     if (!startNode) {
       setStartNode(nodeId);
-    } else if (!endNode) {
+    } else if (!endNode && nodeId !== startNode) { // Prevent selecting same node as start and end
       setEndNode(nodeId);
     }
   };
@@ -51,8 +53,9 @@ const AStarVisualizer = () => {
   };
 
   const startAStar = () => {
-    if (!startNode || !endNode) return;
+    if (!startNode || !endNode || isRunning) return;
     
+    setIsRunning(true); // Disable buttons when starting
     const openSet = [startNode];
     const cameFrom = {};
     const gScore = { [startNode]: 0 };
@@ -63,7 +66,8 @@ const AStarVisualizer = () => {
     const interval = setInterval(() => {
       if (openSet.length === 0) {
         clearInterval(interval);
-        setCurrentStep(4); // Step 5: Update neighbors.
+        setCurrentStep(4);
+        setIsRunning(false); // Re-enable buttons when done
         return;
       }
 
@@ -76,7 +80,8 @@ const AStarVisualizer = () => {
       if (current === endNode) {
         clearInterval(interval);
         reconstructPath(cameFrom, endNode);
-        setCurrentStep(3); // Step 4: Calculate total cost.
+        setCurrentStep(3);
+        setIsRunning(false); // Re-enable buttons when done
         return;
       }
 
@@ -110,13 +115,23 @@ const AStarVisualizer = () => {
     setPath(totalPath);
     setTotalCost(totalCost);
 
-    // Update addition log with the shortest path and total cost
     const shortestPathLog = totalPath.join(" -> ");
     setAdditionLog((prevLog) => [
       ...prevLog,
       `Shortest Path: ${shortestPathLog}`,
       `Total Cost: ${totalCost}`,
     ]);
+  };
+
+  const reset = () => {
+    if (isRunning) return; // Prevent reset while running
+    setStartNode(null);
+    setEndNode(null);
+    setVisitedNodes([]);
+    setPath([]);
+    setTotalCost(0);
+    setCurrentStep(0);
+    setAdditionLog([]);
   };
 
   return (
@@ -154,14 +169,28 @@ const AStarVisualizer = () => {
               );
             })}
             {nodes.map(({ id, x, y }) => (
-              <g key={id} onClick={() => handleNodeClick(id)} style={{ cursor: "pointer" }}>
+              <g key={id} onClick={() => handleNodeClick(id)} style={{ cursor: isRunning ? "not-allowed" : "pointer" }}>
                 <circle cx={x} cy={y} r="20" className={path.includes(id) ? styles.pathNode : visitedNodes.includes(id) ? styles.visitedNode : id === startNode ? styles.startNode : id === endNode ? styles.endNode : styles.circle} />
                 <text x={x} y={y} textAnchor="middle" fill="#fff" dy="5" fontSize="14">{id}</text>
               </g>
             ))}
           </svg>
-          <button className={styles.startButton} onClick={startAStar}>Start A*</button>
-      
+          <div className={styles.buttonContainer}>
+            <button
+              className={styles.startButton}
+              onClick={startAStar}
+              disabled={isRunning}
+            >
+              Start A*
+            </button>
+            <button
+              className={styles.resetButton}
+              onClick={reset}
+              disabled={isRunning}
+            >
+              Reset
+            </button>
+          </div>
         </div>
         <div className={styles.additionLog}>
           <h3>Addition Log</h3>

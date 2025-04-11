@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import React, { useState, useEffect } from 'react';
 
 const cities = [
@@ -137,12 +137,17 @@ const aStar = (start, goal) => {
 
 const findAllPaths = (start, goal) => {
   const paths = [];
+  const uniquePaths = new Set();
   const visited = new Set();
 
   const dfs = (currentPath, currentCost) => {
     const currentCity = currentPath[currentPath.length - 1];
     if (currentCity === goal) {
-      paths.push({ path: [...currentPath], cost: currentCost });
+      const pathString = currentPath.join(' -> ');
+      if (!uniquePaths.has(pathString)) {
+        uniquePaths.add(pathString);
+        paths.push({ path: [...currentPath], cost: currentCost });
+      }
       return;
     }
     visited.add(currentCity);
@@ -169,6 +174,7 @@ const RomaniaMap = () => {
   const [possiblePaths, setPossiblePaths] = useState([]);
   const [highlightedPath, setHighlightedPath] = useState(null);
   const [error, setError] = useState('');
+  const [isRunning, setIsRunning] = useState(false); // New state for disabling buttons
 
   const handleCityClick = (city) => {
     if (!startCity) {
@@ -179,11 +185,9 @@ const RomaniaMap = () => {
   };
 
   const calculateShortestPath = () => {
-    if (!startCity || !endCity) {
-      setError('Please select both start and end cities.');
-      return;
-    }
+    if (!startCity || !endCity || isRunning) return;
     setError('');
+    setIsRunning(true); // Disable buttons when starting
 
     const path = aStar(startCity.name, endCity.name);
     if (path) {
@@ -199,29 +203,37 @@ const RomaniaMap = () => {
       }
       setTraversalSteps([]);
       setTotalCost(0);
+
       // Simulate traversal with delay
       path.forEach((city, index) => {
         setTimeout(() => {
           setPath((prevPath) => [...prevPath, city]);
-        }, index * 1000); // 1 second delay for each step
+        }, index * 1000);
       });
       steps.forEach((step, index) => {
         setTimeout(() => {
           setTraversalSteps((prevSteps) => [...prevSteps, step]);
           setTotalCost((prevCost) => prevCost + parseInt(step.split('Cost is ')[1]));
-        }, index * 1000); // 1 second delay for each step
+        }, index * 1000);
       });
 
-      // Calculate all possible paths
+      // Calculate all possible paths and highlight the shortest
       const allPaths = findAllPaths(startCity.name, endCity.name);
       setPossiblePaths([]);
       allPaths.forEach((route, index) => {
         setTimeout(() => {
           setPossiblePaths((prevPaths) => [...prevPaths, route]);
-        }, (path.length + index) * 1000); // Delay after traversal steps
+          // Highlight the shortest path when all paths are loaded
+          if (index === allPaths.length - 1) {
+            const shortestPath = allPaths.reduce((min, curr) => (curr.cost < min.cost ? curr : min), allPaths[0]);
+            setHighlightedPath(shortestPath.path);
+            setIsRunning(false); // Re-enable buttons when finished
+          }
+        }, (path.length + index) * 1000);
       });
     } else {
       setError('No path found.');
+      setIsRunning(false); // Re-enable buttons if no path is found
     }
   };
 
@@ -230,6 +242,7 @@ const RomaniaMap = () => {
   };
 
   const reset = () => {
+    if (isRunning) return; // Prevent reset while running
     setStartCity(null);
     setEndCity(null);
     setPath([]);
@@ -238,6 +251,7 @@ const RomaniaMap = () => {
     setPossiblePaths([]);
     setHighlightedPath(null);
     setError('');
+    setIsRunning(false);
   };
 
   const getRouteColor = (index) => {
@@ -246,13 +260,13 @@ const RomaniaMap = () => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: '#f0f0f0', width: '100vw', overflow: 'hidden' }}>
-      <header style={{ backgroundColor: '#2c3e50', padding: '10px 0', color: '#fff', textAlign: 'center' }}>
-        <h1 style={{ margin: 0, fontFamily: 'Arial, sans-serif', fontSize: '24px' }}>Traveling Salesman Problem - Romania Map</h1>
+    <div style={styles.container}>
+      <header style={styles.header}>
+        <h1 style={styles.headerTitle}>Traveling Salesman Problem - Romania Map</h1>
       </header>
-      <div style={{ display: 'flex', flexDirection: 'row', flex: 1, overflow: 'hidden' }}>
-        <div style={{ flex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', overflow: 'hidden' }}>
-          <svg width="800" height="500" style={{ border: '1px solid #ccc', borderRadius: '10px', backgroundColor: '#fff', overflow: 'hidden' }}>
+      <div style={styles.content}>
+        <div style={styles.mapContainer}>
+          <svg width="800" height="500" style={styles.svg}>
             {connections.map((conn, index) => {
               const city1 = cities.find((c) => c.name === conn.from);
               const city2 = cities.find((c) => c.name === conn.to);
@@ -267,14 +281,14 @@ const RomaniaMap = () => {
                       style={{
                         stroke: highlightedPath && highlightedPath.includes(conn.from) && highlightedPath.includes(conn.to)
                           ? getRouteColor(possiblePaths.findIndex(route => route.path === highlightedPath))
-                          : '#888',
-                        strokeWidth: highlightedPath && highlightedPath.includes(conn.from) && highlightedPath.includes(conn.to) ? 3 : 2
+                          : '#555',
+                        strokeWidth: highlightedPath && highlightedPath.includes(conn.from) && highlightedPath.includes(conn.to) ? 3 : 2,
                       }}
                     />
                     <text
                       x={((city1.x + city2.x) / 2).toFixed(0)}
                       y={((city1.y + city2.y) / 2).toFixed(0) - 10}
-                      style={{ fill: '#555', fontSize: '12px', pointerEvents: 'none', textAnchor: 'middle' }}
+                      style={styles.distanceText}
                     >
                       {conn.distance}
                     </text>
@@ -291,42 +305,63 @@ const RomaniaMap = () => {
                   r="10"
                   style={{
                     fill: startCity === city ? '#32CD32' : endCity === city ? '#FF6347' : path.includes(city.name) ? '#FFD700' : '#1E90FF',
-                    stroke: 'white',
+                    stroke: '#FFFFFF',
                     strokeWidth: 2,
-                    transition: 'fill 0.3s'
+                    transition: 'fill 0.3s',
                   }}
                 />
-                <text x={city.x} y={city.y - 15} style={{ fill: '#333', fontSize: '16px', fontWeight: 'bold', pointerEvents: 'none', textAnchor: 'middle' }}>
+                <text x={city.x} y={city.y - 15} style={styles.cityText}>
                   {city.name}
                 </text>
               </g>
             ))}
           </svg>
-          <div style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>
-            <button onClick={calculateShortestPath} disabled={!startCity || !endCity} style={buttonStyle}>Start</button>
-            <button onClick={reset} style={buttonStyle}>Reset</button>
+          <div style={styles.buttonContainer}>
+            <button
+              onClick={calculateShortestPath}
+              disabled={!startCity || !endCity || isRunning}
+              style={{
+                ...styles.startButton,
+                ...(isRunning ? styles.buttonDisabled : {}),
+              }}
+            >
+              Start
+            </button>
+            <button
+              onClick={reset}
+              disabled={isRunning}
+              style={{
+                ...styles.resetButton,
+                ...(isRunning ? styles.buttonDisabled : {}),
+              }}
+            >
+              Reset
+            </button>
           </div>
-          {error && <div style={{ color: 'red', fontSize: '20px', margin: '10px' }}>{error}</div>}
+          {error && <div style={styles.error}>{error}</div>}
         </div>
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '20px', fontFamily: 'Arial, sans-serif', fontSize: '18px', color: '#333', backgroundColor: '#fff', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
-          <div style={{ flex: 1, overflowY: 'auto', marginBottom: '20px' }}>
-            <h2 style={{ margin: '0 0 20px', fontSize: '24px', color: '#d206ec' }}>Traversal Steps</h2>
-            <ul style={{ listStyleType: 'none', padding: 0 }}>
+        <div style={styles.infoContainer}>
+          <div style={styles.traversalSection}>
+            <h2 style={styles.sectionTitle}>Traversal Steps</h2>
+            <ul style={styles.list}>
               {traversalSteps.map((step, index) => (
-                <li key={index} style={{ margin: '5px 0' }}>{step}</li>
+                <li key={index} style={styles.listItem}>{step}</li>
               ))}
             </ul>
-            <h3 style={{ margin: '20px 0', fontSize: '24px', color: '#2c3e50' }}>Total Cost: {totalCost}</h3>
+            <h3 style={styles.costTitle}>Total Cost: {totalCost}</h3>
           </div>
-          <div style={{ flex: 1, overflowY: 'auto' }}>
-            <h2 style={{ margin: '20px 0', fontSize: '24px', color: '#d206ec' }}>Possible Routes</h2>
-            <h3 style={{ margin: '20px 0', fontSize: '15px', color: '#d206ec' }}>"Click the route to view possible routes"</h3>
-            <ul style={{ listStyleType: 'none', padding: 0, maxHeight: '200px', overflowY: 'scroll' }}>
+          <div style={styles.routesSection}>
+            <h2 style={styles.sectionTitle}>Possible Routes</h2>
+            <h3 style={styles.subTitle}>"Click the route to view possible routes"</h3>
+            <ul style={styles.routesList}>
               {possiblePaths.map((route, index) => (
                 <li
                   key={index}
                   onClick={() => handleRouteClick(route)}
-                  style={{ margin: '5px 0', color: route.cost === totalCost ? 'red' : 'inherit', cursor: 'pointer' }}
+                  style={{
+                    ...styles.routeItem,
+                    color: route.cost === totalCost ? '#FFD700' : '#CCCCCC', // Highlight shortest path in gold
+                  }}
                 >
                   Route {index + 1}: {route.path.join(' -> ')} - Cost: {route.cost}
                 </li>
@@ -339,20 +374,167 @@ const RomaniaMap = () => {
   );
 };
 
-const buttonStyle = {
-  marginRight: '10px',
-  padding: '4px 20px',
-  fontSize: '16px',
-  backgroundColor: '#2c3e50',
-  color: '#fff',
-  border: 'none',
-  borderRadius: '5px',
-  cursor: 'pointer',
-  transition: 'background-color 0.3s',
+// Black theme styles with attractive colors for heading and buttons
+const styles = {
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100vh',
+    backgroundColor: '#1C2526',
+    width: '100vw',
+    overflow: 'hidden',
+  },
+  header: {
+    backgroundColor: '#121212',
+    padding: '10px 0',
+    color: '#FFFFFF',
+    textAlign: 'center',
+  },
+  headerTitle: {
+    margin: 0,
+    fontFamily: 'Arial, sans-serif',
+    fontSize: '24px',
+    color: '#00FFFF',
+    textShadow: '0 0 10px rgba(0, 255, 255, 0.7)',
+  },
+  content: {
+    display: 'flex',
+    flexDirection: 'row',
+    flex: 1,
+    overflow: 'hidden',
+  },
+  mapContainer: {
+    flex: 2,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+    backgroundColor: '#1C2526',
+  },
+  svg: {
+    border: '1px solid #333',
+    borderRadius: '10px',
+    backgroundColor: '#2E2E2E',
+    overflow: 'hidden',
+  },
+  distanceText: {
+    fill: '#AAAAAA',
+    fontSize: '12px',
+    pointerEvents: 'none',
+    textAnchor: 'middle',
+  },
+  cityText: {
+    fill: '#FFFFFF',
+    fontSize: '16px',
+    fontWeight: 'bold',
+    pointerEvents: 'none',
+    textAnchor: 'middle',
+  },
+  buttonContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    padding: '20px',
+  },
+  startButton: {
+    marginRight: '10px',
+    padding: '4px 20px',
+    fontSize: '16px',
+    backgroundColor: '#FF1493',
+    color: '#FFFFFF',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    transition: 'background-color 0.3s, transform 0.2s',
+    boxShadow: '0 0 10px rgba(255, 20, 147, 0.5)',
+  },
+  resetButton: {
+    padding: '4px 20px',
+    fontSize: '16px',
+    backgroundColor: '#00FF7F',
+    color: '#000000',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    transition: 'background-color 0.3s, transform 0.2s',
+    boxShadow: '0 0 10px rgba(0, 255, 127, 0.5)',
+  },
+  buttonDisabled: {
+    backgroundColor: '#555555',
+    cursor: 'not-allowed',
+    boxShadow: 'none',
+  },
+  error: {
+    color: '#FF5555',
+    fontSize: '20px',
+    margin: '10px',
+  },
+  infoContainer: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    padding: '20px',
+    fontFamily: 'Arial, sans-serif',
+    fontSize: '18px',
+    color: '#CCCCCC',
+    backgroundColor: '#212121',
+    borderRadius: '10px',
+    boxShadow: '0 4px 8px rgba(0,0,0,0.5)',
+    overflow: 'hidden',
+  },
+  traversalSection: {
+    flex: 1,
+    overflowY: 'auto',
+    marginBottom: '20px',
+  },
+  sectionTitle: {
+    margin: '0 0 20px',
+    fontSize: '24px',
+    color: '#FF69B4',
+  },
+  list: {
+    listStyleType: 'none',
+    padding: 0,
+  },
+  listItem: {
+    margin: '5px 0',
+  },
+  costTitle: {
+    margin: '20px 0',
+    fontSize: '24px',
+    color: '#FFD700',
+  },
+  routesSection: {
+    flex: 1,
+    overflowY: 'auto',
+  },
+  subTitle: {
+    margin: '20px 0',
+    fontSize: '15px',
+    color: '#FF69B4',
+  },
+  routesList: {
+    listStyleType: 'none',
+    padding: 0,
+    maxHeight: '200px',
+    overflowY: 'scroll',
+  },
+  routeItem: {
+    margin: '5px 0',
+    cursor: 'pointer',
+    transition: 'color 0.3s',
+  },
 };
 
-buttonStyle[':hover'] = {
-  backgroundColor: '#1a252f',
+// Add hover effects for buttons
+styles.startButton[':hover'] = {
+  backgroundColor: '#FF69B4',
+  transform: 'scale(1.05)',
+};
+
+styles.resetButton[':hover'] = {
+  backgroundColor: '#7CFC00',
+  transform: 'scale(1.05)',
 };
 
 export default RomaniaMap;

@@ -101,7 +101,7 @@ const GraphPage: React.FC = () => {
                             style={{ maxWidth: "500px", height: "300px" }}
                         />
                         <p className="text-gray-300">
-                            An undirected graph has <strong>bi-directional edges</strong>,
+                            An undirected graph has <strong>bi-directional edges</strong>,+
                             allowing movement in both directions.
                         </p>
                     </div>

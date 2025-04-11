@@ -19,15 +19,15 @@ const NQueens = () => {
   }, [n]);
 
   const solveNQueens = async () => {
-    if (n > 16) return;
-    setSolving(true);
+    if (n > 16 || solving) return; // Prevent starting if already solving
+    setSolving(true); // Set solving to true to disable all controls
     let newBoard = Array.from({ length: n }, () => Array(n).fill(0));
     if (algorithm === "backtracking") {
       await backtrackingSolve(newBoard, 0);
     } else {
       await geneticSolve();
     }
-    setSolving(false);
+    setSolving(false); // Re-enable controls when done
   };
 
   const backtrackingSolve = async (board, col) => {
@@ -129,21 +129,19 @@ const NQueens = () => {
         return;
       }
 
-      // Visualize the best individual of the current generation
       const currentBoard = Array.from({ length: n }, () => Array(n).fill(0));
       bestIndividual.forEach((queen, col) => {
         currentBoard[queen][col] = 1;
       });
       setBoard(currentBoard);
 
-      // Introduce a delay to visualize the progress
       await new Promise((res) => setTimeout(res, speed));
     }
   };
 
   return (
     <div style={{ textAlign: "center", paddingTop: "40px", backgroundColor: "black", color: "white", minHeight: "100vh" }}>
-      <div style={{ position: "fixed", top: 10, width: "60%", background: "black", padding: "5px", zIndex: 800, left: "20%", border: "2px solid white" }}>
+      <div style={{ position: "fixed", top: 10, width: "60%", background: "black", padding: "5px", zIndex: 800, left: "20%", border: "2px solid #00FF9D" }}>
         <h1 style={{ marginBottom: "20px", fontSize: "3em", color: "#00FF9D", fontWeight: "bold" }}>
           N-Queens Visualization
         </h1>
@@ -156,36 +154,45 @@ const NQueens = () => {
               max="16"
               value={n}
               onChange={(e) => setN(parseInt(e.target.value))}
-              style={{ width: "50px", padding: "5px", borderRadius: "5px", border: "1px solid white" }}
+              disabled={solving} // Disable input when solving
+              style={{
+                width: "50px",
+                padding: "5px",
+                borderRadius: "5px",
+                border: "1px solid #00FF9D",
+                backgroundColor: solving ? "#333333" : "#1a1a1a", // Gray out when disabled
+                color: "#00FF9D",
+                fontWeight: "bold",
+              }}
             />
           </label>
           <div style={{ display: "flex", gap: "10px" }}>
             <button
               onClick={() => setAlgorithm("backtracking")}
-              disabled={solving}
+              disabled={solving} // Disable when solving
               style={{
                 padding: "10px 20px",
                 borderRadius: "5px",
-                border: "1px solid white",
-                backgroundColor: algorithm === "backtracking" ? "white" : "transparent",
-                color: algorithm === "backtracking" ? "black" : "white",
-                cursor: "pointer",
-                transition: "background-color 0.3s, color 0.3s"
+                border: "1px solid #00FF9D",
+                backgroundColor: algorithm === "backtracking" ? "#00FF9D" : solving ? "#555555" : "#1a1a1a", // Gray out when disabled
+                color: algorithm === "backtracking" ? "black" : solving ? "#AAAAAA" : "#00FF9D",
+                cursor: solving ? "not-allowed" : "pointer",
+                transition: "background-color 0.3s, color 0.3s",
               }}
             >
               Backtracking
             </button>
             <button
               onClick={() => setAlgorithm("genetic")}
-              disabled={solving}
+              disabled={solving} // Disable when solving
               style={{
                 padding: "10px 20px",
                 borderRadius: "5px",
-                border: "1px solid white",
-                backgroundColor: algorithm === "genetic" ? "white" : "transparent",
-                color: algorithm === "genetic" ? "black" : "white",
-                cursor: "pointer",
-                transition: "background-color 0.3s, color 0.3s"
+                border: "1px solid #00FF9D",
+                backgroundColor: algorithm === "genetic" ? "#00FF9D" : solving ? "#555555" : "#1a1a1a", // Gray out when disabled
+                color: algorithm === "genetic" ? "black" : solving ? "#AAAAAA" : "#00FF9D",
+                cursor: solving ? "not-allowed" : "pointer",
+                transition: "background-color 0.3s, color 0.3s",
               }}
             >
               Genetic Algorithm
@@ -193,8 +200,16 @@ const NQueens = () => {
           </div>
           <select
             onChange={(e) => setSpeed(parseInt(e.target.value))}
-            disabled={solving}
-            style={{ marginLeft: "20px", padding: "5px", borderRadius: "5px", border: "1px solid white" }}
+            disabled={solving} // Disable when solving
+            style={{
+              marginLeft: "20px",
+              padding: "5px",
+              borderRadius: "5px",
+              border: "1px solid #00FF9D",
+              backgroundColor: solving ? "#333333" : "#1a1a1a", // Gray out when disabled
+              color: solving ? "#AAAAAA" : "#00FF9D",
+              cursor: solving ? "not-allowed" : "pointer",
+            }}
           >
             <option value={1000}>Slow</option>
             <option value={500}>Moderate</option>
@@ -202,16 +217,16 @@ const NQueens = () => {
           </select>
           <button
             onClick={solveNQueens}
-            disabled={solving}
+            disabled={solving} // Disable when solving
             style={{
               marginLeft: "20px",
               padding: "10px 20px",
               borderRadius: "5px",
-              border: "1px solid white",
-              backgroundColor: "white",
-              color: "black",
-              cursor: "pointer",
-              transition: "background-color 0.3s, color 0.3s"
+              border: "1px solid #FF5722",
+              backgroundColor: solving ? "#555555" : "#FF5722", // Gray out when disabled
+              color: solving ? "#AAAAAA" : "black",
+              cursor: solving ? "not-allowed" : "pointer",
+              transition: "background-color 0.3s, color 0.3s",
             }}
           >
             Start
@@ -220,7 +235,7 @@ const NQueens = () => {
         {error && <p style={{ color: "red" }}>{error}</p>}
       </div>
       <div style={{ marginTop: "150px", display: "flex", justifyContent: "center" }}>
-        <div style={{ border: "2px solid white", padding: "20px", backgroundColor: "black" }}>
+        <div style={{ border: "2px solid #00FF9D", padding: "20px", backgroundColor: "black" }}>
           <div style={{ display: "grid", gridTemplateColumns: `repeat(${n}, 1fr)`, width: "400px", height: "400px" }}>
             {board.map((row, i) => (
               row.map((cell, j) => (

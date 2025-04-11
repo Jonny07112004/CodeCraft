@@ -6,9 +6,8 @@ const LinkedListVisualizerC = () => {
   const [pseudoCodeSteps, setPseudoCodeSteps] = useState<string[]>([]);
   const [highlightedStep, setHighlightedStep] = useState<number | null>(null);
   const [tempIndex, setTempIndex] = useState<number | null>(null);
-  const [listType, setListType] = useState<"singly" | "doubly" | "circular">("singly");
+  const [listType, setListType] = useState<"singly" | "doubly">("singly");
 
-  // Function to get pseudo-code for each operation
   const getPseudoCodeSteps = (operation: string, value?: number, position?: number | string) => {
     switch (operation) {
       case "insert-start":
@@ -18,17 +17,6 @@ const LinkedListVisualizerC = () => {
               `newNode.next = head`,
               `newNode.prev = NULL`,
               `if head != NULL: head.prev = newNode`,
-              `head = newNode`
-            ]
-          : listType === "circular"
-          ? [
-              `newNode = createNode(${value})`,
-              `newNode.next = head`,
-              `if head != NULL:`,
-              `  temp = head`,
-              `  while temp.next != head: temp = temp.next`,
-              `  temp.next = newNode`,
-              `  newNode.next = head`,
               `head = newNode`
             ]
           : [
@@ -45,18 +33,6 @@ const LinkedListVisualizerC = () => {
               `while temp.next != NULL: temp = temp.next`,
               `temp.next = newNode`,
               `newNode.prev = temp`
-            ]
-          : listType === "circular"
-          ? [
-              `newNode = createNode(${value})`,
-              `if head is NULL:`,
-              `  head = newNode`,
-              `  newNode.next = newNode`,
-              `else:`,
-              `  temp = head`,
-              `  while temp.next != head: temp = temp.next`,
-              `  temp.next = newNode`,
-              `  newNode.next = head`
             ]
           : [
               `newNode = createNode(${value})`,
@@ -76,14 +52,6 @@ const LinkedListVisualizerC = () => {
               `if temp.next != NULL: temp.next.prev = newNode`,
               `temp.next = newNode`
             ]
-          : listType === "circular"
-          ? [
-              `newNode = createNode(${value})`,
-              `temp = head`,
-              `for i = 0 to ${(position as number) - 1}: temp = temp.next`,
-              `newNode.next = temp.next`,
-              `temp.next = newNode`
-            ]
           : [
               `newNode = createNode(${value})`,
               `temp = head`,
@@ -98,16 +66,6 @@ const LinkedListVisualizerC = () => {
               `head = head.next`,
               `if head != NULL: head.prev = NULL`
             ]
-          : listType === "circular"
-          ? [
-              `if head == NULL: return`,
-              `if head.next == head: head = NULL`,
-              `else:`,
-              `  temp = head`,
-              `  while temp.next != head: temp = temp.next`,
-              `  temp.next = head.next`,
-              `  head = head.next`
-            ]
           : [
               `if head == NULL: return`,
               `head = head.next`
@@ -121,15 +79,6 @@ const LinkedListVisualizerC = () => {
               `while temp.next.next != NULL: temp = temp.next`,
               `temp.next = NULL`
             ]
-          : listType === "circular"
-          ? [
-              `if head == NULL: return`,
-              `if head.next == head: head = NULL`,
-              `else:`,
-              `  temp = head`,
-              `  while temp.next.next != head: temp = temp.next`,
-              `  temp.next = head`
-            ]
           : [
               `if head == NULL: return`,
               `if head.next == NULL: head = NULL`,
@@ -141,19 +90,13 @@ const LinkedListVisualizerC = () => {
         return listType === "doubly"
           ? [
               `temp = head`,
-              `for i = 0 to ${position as number- 1}: temp = temp.next`,
+              `for i = 0 to ${(position as number) - 1}: temp = temp.next`,
               `temp.next = temp.next.next`,
               `if temp.next != NULL: temp.next.prev = temp`
             ]
-          : listType === "circular"
-          ? [
-              `temp = head`,
-              `for i = 0 to ${position as number- 1}: temp = temp.next`,
-              `temp.next = temp.next.next`
-            ]
           : [
               `temp = head`,
-              `for i = 0 to ${position as number- 1}: temp = temp.next`,
+              `for i = 0 to ${(position as number) - 1}: temp = temp.next`,
               `temp.next = temp.next.next`
             ];
       case "search":
@@ -168,7 +111,6 @@ const LinkedListVisualizerC = () => {
     }
   };
 
-  // Simultaneous temp traversal and pseudo-code execution
   const traverseAndHighlight = async (steps: string[], targetIndex: number, callback: () => void) => {
     for (let i = 0; i < steps.length; i++) {
       setHighlightedStep(i);
@@ -182,7 +124,6 @@ const LinkedListVisualizerC = () => {
     setTempIndex(null);
   };
 
-  // Insert at Start
   const insertAtStart = (value: number) => {
     const steps = getPseudoCodeSteps("insert-start", value);
     setPseudoCodeSteps(steps);
@@ -191,7 +132,6 @@ const LinkedListVisualizerC = () => {
     });
   };
 
-  // Insert at End
   const insertAtEnd = (value: number) => {
     const steps = getPseudoCodeSteps("insert-end", value);
     setPseudoCodeSteps(steps);
@@ -200,7 +140,6 @@ const LinkedListVisualizerC = () => {
     });
   };
 
-  // Insert at Index
   const insertAtIndex = (value: number, position: number) => {
     if (position < 0 || position > nodes.length) return;
     const steps = getPseudoCodeSteps("insert-index", value, position);
@@ -212,7 +151,6 @@ const LinkedListVisualizerC = () => {
     });
   };
 
-  // Delete from Start
   const deleteFromStart = () => {
     if (nodes.length === 0) return;
     const steps = getPseudoCodeSteps("delete-start");
@@ -222,7 +160,6 @@ const LinkedListVisualizerC = () => {
     });
   };
 
-  // Delete from End
   const deleteFromEnd = () => {
     if (nodes.length === 0) return;
     const steps = getPseudoCodeSteps("delete-end");
@@ -232,7 +169,6 @@ const LinkedListVisualizerC = () => {
     });
   };
 
-  // Delete from Index
   const deleteFromIndex = (position: number) => {
     if (position < 0 || position >= nodes.length) return;
     const steps = getPseudoCodeSteps("delete-index", undefined, position);
@@ -262,12 +198,6 @@ const LinkedListVisualizerC = () => {
         >
           Doubly Linked List
         </button>
-        <button
-          className={`px-4 py-2 ${listType === "circular" ? "bg-purple-500" : "bg-gray-500"} rounded`}
-          onClick={() => setListType("circular")}
-        >
-          Circular Linked List
-        </button>
       </div>
 
       {/* Buttons */}
@@ -293,7 +223,7 @@ const LinkedListVisualizerC = () => {
       </div>
 
       {/* Visualization */}
-      <div className="border-2 border-gray-400 rounded p-4 w-full flex items-center justify-start gap-8 overflow-x-auto">
+      <div className="border-2 border-gray-400 rounded p-4 w-full flex items-center justify-start gap-8 overflow-x-auto relative">
         {nodes.length === 0 ? (
           <p className="text-gray-400">No nodes in the linked list.</p>
         ) : (
@@ -310,25 +240,35 @@ const LinkedListVisualizerC = () => {
                 <div className="text-lg font-bold">{value}</div>
                 <div className="text-xs mt-1 text-gray-300">Data</div>
               </motion.div>
-              {/* Arrows for connections */}
+
+              {/* Connections */}
+              {listType === "singly" && index !== nodes.length - 1 && (
+                <svg className="w-8 h-8" fill="none" stroke="white" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5h6m0 0l-3-3m3 3l-3 3" />
+                </svg>
+              )}
+
               {listType === "doubly" && (
                 <>
-                  <div className="w-4 h-4 border-l border-t border-white transform rotate-45"></div>
-                  <div className="w-4 h-4 border-r border-t border-white transform rotate-45"></div>
-                </>
-              )}
-              {listType === "singly" && index !== nodes.length - 1 && (
-                <div className="w-4 h-4 border-r border-t border-white transform rotate-45"></div>
-              )}
-              {listType === "circular" && (
-                <>
-                  <div className="w-4 h-4 border-r border-t border-white transform rotate-45"></div>
-                  {index === nodes.length - 1 && (
-                    <div className="absolute left-[-20px] bottom-[-20px] w-4 h-4 border-l border-b border-white transform rotate-[135deg]"></div>
+                  {index !== nodes.length - 1 && (
+                    <svg className="w-8 h-8" fill="none" stroke="white" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5h6m0 0l-3-3m3 3l-3 3" />
+                    </svg>
+                  )}
+                  {index !== 0 && (
+                    <svg
+                      className="absolute left-[-40px] w-8 h-8"
+                      fill="none"
+                      stroke="white"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5h-6m0 0l3-3m-3 3l3 3" />
+                    </svg>
                   )}
                 </>
               )}
-              <div className="text-xs mt-1 text-gray-400">
+
+              <div className="text-xs mt-1 text-gray-400 absolute bottom-[-20px]">
                 Index: {index} {tempIndex === index ? `(temp)` : ""}
               </div>
             </div>

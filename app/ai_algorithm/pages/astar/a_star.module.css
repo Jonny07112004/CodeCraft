@@ -79,7 +79,7 @@
 
 .graph {
   width: 100%;
-  height: 100%;
+  height: 80%; /* Adjusted to leave space for buttons */
   border: 1px solid #444;
   background: #1e1e1e;
   border-radius: 10px;
@@ -109,8 +109,13 @@
   fill: #0066cc !important;
 }
 
+.buttonContainer {
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+}
+
 .startButton {
-  margin-top: 25px;
   padding: 12px 24px;
   font-size: 18px;
   cursor: pointer;
@@ -121,9 +126,35 @@
   transition: background-color 0.3s, transform 0.3s;
 }
 
-.startButton:hover {
+.startButton:hover:enabled {
   background-color: #0056b3;
   transform: scale(1.05);
+}
+
+.startButton:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+}
+
+.resetButton {
+  padding: 12px 24px;
+  font-size: 18px;
+  cursor: pointer;
+  border: none;
+  background-color: #ff4444;
+  color: white;
+  border-radius: 5px;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.resetButton:hover:enabled {
+  background-color: #cc0000;
+  transform: scale(1.05);
+}
+
+.resetButton:disabled {
+  background-color: #555;
+  cursor: not-allowed;
 }
 
 .additionLog {

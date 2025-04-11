@@ -67,7 +67,7 @@ const MazeTraversal = () => {
     interval = setInterval(() => {
       if (openSet.length === 0) {
         clearInterval(interval);
-        setIsRunning(false);
+        setIsRunning(false); // Reset isRunning when both algorithms finish
         setAStarIterations(iterations);
         return;
       }
@@ -81,7 +81,8 @@ const MazeTraversal = () => {
       if (x === end[0] && y === end[1]) {
         setAStarPath([...path, [x, y]]);
         clearInterval(interval);
-        setIsRunning(false);
+        // Only set isRunning to false if Dijkstra is also done
+        if (!dijkstraPath.length) setIsRunning(false);
         setAStarIterations(iterations);
         return;
       }
@@ -110,7 +111,7 @@ const MazeTraversal = () => {
     interval = setInterval(() => {
       if (queue.length === 0) {
         clearInterval(interval);
-        setIsRunning(false);
+        setIsRunning(false); // Reset isRunning when both algorithms finish
         setDijkstraIterations(iterations);
         return;
       }
@@ -124,7 +125,8 @@ const MazeTraversal = () => {
       if (x === end[0] && y === end[1]) {
         setDijkstraPath([...path, [x, y]]);
         clearInterval(interval);
-        setIsRunning(false);
+        // Only set isRunning to false if A* is also done
+        if (!aStarPath.length) setIsRunning(false);
         setDijkstraIterations(iterations);
         return;
       }
@@ -144,13 +146,14 @@ const MazeTraversal = () => {
   };
 
   const runAlgorithms = () => {
+    if (isRunning) return; // Prevent running if already in progress
+    setIsRunning(true);
     setAStarPath([]);
     setDijkstraPath([]);
     setVisitedNodesA([]);
     setVisitedNodesD([]);
     setCurrentNodeA(null);
     setCurrentNodeD(null);
-    setIsRunning(true);
     setAStarIterations(0);
     setDijkstraIterations(0);
 
@@ -159,6 +162,7 @@ const MazeTraversal = () => {
   };
 
   const resetMaze = () => {
+    if (isRunning) return; // Prevent reset while running
     setAStarPath([]);
     setDijkstraPath([]);
     setVisitedNodesA([]);
@@ -221,7 +225,10 @@ const MazeTraversal = () => {
       <div style={styles.buttonContainer}>
         <button
           onClick={runAlgorithms}
-          style={{ ...styles.button, ...(isRunning ? styles.buttonDisabled : {}) }}
+          style={{
+            ...styles.button,
+            ...(isRunning ? styles.buttonDisabled : {}),
+          }}
           disabled={isRunning}
           onMouseOver={(e) => !isRunning && (e.currentTarget.style.backgroundColor = "#FF1493")}
           onMouseOut={(e) => !isRunning && (e.currentTarget.style.backgroundColor = "#FF69B4")}
@@ -230,9 +237,13 @@ const MazeTraversal = () => {
         </button>
         <button
           onClick={resetMaze}
-          style={styles.button}
-          onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#FF1493")}
-          onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#FF69B4")}
+          style={{
+            ...styles.button,
+            ...(isRunning ? styles.buttonDisabled : {}),
+          }}
+          disabled={isRunning}
+          onMouseOver={(e) => !isRunning && (e.currentTarget.style.backgroundColor = "#FF1493")}
+          onMouseOut={(e) => !isRunning && (e.currentTarget.style.backgroundColor = "#FF69B4")}
         >
           🔄 Reset
         </button>

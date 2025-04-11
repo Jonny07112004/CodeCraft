@@ -116,7 +116,7 @@ const App: React.FC = () => {
                 <SelectValue placeholder="Select disk count" />
               </SelectTrigger>
               <SelectContent>
-                {[3, 4, 5, 6, 7].map((num) => (
+                {[3, 4, 5].map((num) => (
                   <SelectItem key={num} value={num.toString()}>
                     {num} Disks
                   </SelectItem>

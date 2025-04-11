@@ -7,7 +7,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { motion } from "framer-motion"; // For animations
+import { motion } from "framer-motion";
 
 const MainPage = () => {
   const [arr, setarr] = useState([34, 22, 13, 66, 32, 50, 56, 88]);
@@ -21,7 +21,6 @@ const MainPage = () => {
   const [isBinary, setBinary] = useState(false);
   const [pseudoCode, setPseudoCode] = useState<string[]>([]);
   const [currentStep, setCurrentStep] = useState<number>(-1);
-  const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
   async function sortArray() {
     let sortedArray = [...arr];
@@ -33,7 +32,8 @@ const MainPage = () => {
       "    if arr[i] > arr[j]",
       "      swap arr[i] and arr[j]",
       "end for",
-      "end for"
+      "end for",
+      "Time Complexity: O(n²) - Worst and Average case"
     ]);
     setCurrentStep(0);
     for (i = 0; i < sortedArray.length; i++) {
@@ -48,7 +48,7 @@ const MainPage = () => {
           temp = sortedArray[i];
           sortedArray[i] = sortedArray[j];
           sortedArray[j] = temp;
-          setarr(sortedArray);
+          setarr([...sortedArray]);
           await delay(1000);
           setCurrentStep(3);
         }
@@ -73,7 +73,8 @@ const MainPage = () => {
       "      min_idx = j",
       "  end for",
       "  swap arr[i] and arr[min_idx]",
-      "end for"
+      "end for",
+      "Time Complexity: O(n²) - Worst, Average, and Best case"
     ]);
     setCurrentStep(0);
     for (let i = 0; i < n - 1; i++) {
@@ -94,7 +95,7 @@ const MainPage = () => {
       sortedArray[i] = sortedArray[min_idx];
       sortedArray[min_idx] = temp;
       await delay(1000);
-      setarr(sortedArray);
+      setarr([...sortedArray]);
       setCurrentStep(4);
     }
     settrackj([-1]);
@@ -114,7 +115,8 @@ const MainPage = () => {
       "    j = j - 1",
       "  end while",
       "  arr[j + 1] = key",
-      "end for"
+      "end for",
+      "Time Complexity: O(n²) - Worst and Average case, O(n) - Best case"
     ]);
     setCurrentStep(0);
     for (let i = 1; i < sortedArray.length; i++) {
@@ -138,6 +140,7 @@ const MainPage = () => {
     settrackj([-1]);
     settracki([-1]);
     setCurrentStep(5);
+    setclick(false);
   }
 
   const delay = (duration: number | undefined) => {
@@ -155,20 +158,30 @@ const MainPage = () => {
     settrackk([-1]);
     settracki([-1]);
     settrackj([-1]);
-    setPseudoCode(['']);
+    setPseudoCode([""]);
     setBinary(false);
     setarr(reArray);
+    setclick(false);
   };
 
   const addElement = () => {
     const inputElement = document.getElementById("arrayelement") as HTMLInputElement;
     const inputValue = Number(inputElement.value);
-    if (arr.length < 10 && inputValue !== 0) {
+    setPseudoCode([
+      "if length(arr) < 8 and value != 0",
+      "  append value to arr",
+      "end if",
+      "Time Complexity: O(1) - Amortized (array resizing may be O(n))"
+    ]);
+    setCurrentStep(0);
+    if (arr.length < 8 && inputValue !== 0) {
+      setCurrentStep(1);
       setarr([...arr, inputValue]);
     } else {
-      alert("Array can only hold 10 elements or non-zero input is required.");
+      alert("Array can only hold 8 elements or non-zero input is required.");
     }
     inputElement.value = "";
+    setCurrentStep(3); // Highlight time complexity
   };
 
   const insertAtIndex = () => {
@@ -176,15 +189,26 @@ const MainPage = () => {
     const indexElement = document.getElementById("arrayindex") as HTMLInputElement;
     const value = Number(valueElement.value);
     const index = Number(indexElement.value);
-    if (index >= 0 && index <= arr.length && value !== 0) {
+    setPseudoCode([
+      "if length(arr) < 8 and index >= 0 and index <= length(arr) and value != 0",
+      "  shift elements from index to right",
+      "  arr[index] = value",
+      "end if",
+      "Time Complexity: O(n) - Due to shifting elements"
+    ]);
+    setCurrentStep(0);
+    if (arr.length < 8 && index >= 0 && index <= arr.length && value !== 0) {
+      setCurrentStep(1);
       const newArray = [...arr];
       newArray.splice(index, 0, value);
+      setCurrentStep(2);
       setarr(newArray);
     } else {
-      alert("Invalid index or value.");
+      alert("Array limited to 8 elements, or invalid index/value.");
     }
     valueElement.value = "";
     indexElement.value = "";
+    setCurrentStep(4); // Highlight time complexity
   };
 
   const inputFunc = () => {
@@ -204,7 +228,8 @@ const MainPage = () => {
       "    return i",
       "  end if",
       "end for",
-      "return -1"
+      "return -1",
+      "Time Complexity: O(n) - Worst and Average case"
     ]);
     setCurrentStep(0);
     if (isSearch) {
@@ -219,7 +244,7 @@ const MainPage = () => {
           break;
         }
         setCurrentStep(2);
-        if (j === 1) alert("Not Found The Element");
+        if (j !== 1 && i === sortedArray.length - 1) alert("Not Found The Element");
       }
       settracki([-1]);
       setCurrentStep(3);
@@ -243,7 +268,8 @@ const MainPage = () => {
       "    right = mid - 1",
       "  end if",
       "end while",
-      "return -1"
+      "return -1",
+      "Time Complexity: O(log n) - Worst and Average case (sorted array)"
     ]);
     setCurrentStep(0);
     settracki([left]);
@@ -277,7 +303,7 @@ const MainPage = () => {
     }
     alert("Target not found in the array.");
     settracki([-1]);
-    settrackj([-1]);
+    settrackj(["-1"]);
     setCurrentStep(8);
   }
 
@@ -288,7 +314,16 @@ const MainPage = () => {
         <div className="p-4 bg-gray-700 rounded-lg h-full overflow-auto">
           <code className="text-gray-300 font-mono whitespace-pre-wrap">
             {pseudoCode.map((step, index) => (
-              <div key={index} className={currentStep === index ? "text-yellow-300" : ""}>
+              <div
+                key={index}
+                className={
+                  currentStep === index
+                    ? "text-yellow-300"
+                    : index === pseudoCode.length - 1
+                    ? "text-green-400"
+                    : ""
+                }
+              >
                 {step}
               </div>
             ))}
@@ -322,10 +357,10 @@ const MainPage = () => {
                 <DropdownMenuContent className="bg-gray-800 text-white">
                   <DropdownMenuLabel>Insertion in Array</DropdownMenuLabel>
                   <DropdownMenuItem>
-                    <button onClick={() => { setarr([]); setInsert(true); setSearch(false);setIndex(false) }} className="w-full text-left px-4 py-2 hover:bg-gray-700">Insert Data</button>
+                    <button onClick={() => { setarr([]); setInsert(true); setSearch(false); setIndex(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-700">Insert Data</button>
                   </DropdownMenuItem>
                   <DropdownMenuItem>
-                    <button onClick={() => {  setSearch(false); resetArray(); setIndex(true)}} className="w-full text-left px-4 py-2 hover:bg-gray-700">Insert at Specified Index</button>
+                    <button onClick={() => { setSearch(false); resetArray(); setIndex(true); setarr([12,23,65,54])}} className="w-full text-left px-4 py-2 hover:bg-gray-700">Insert at Specified Index</button>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -336,7 +371,7 @@ const MainPage = () => {
                 <DropdownMenuContent className="bg-gray-800 text-white">
                   <DropdownMenuLabel>Searching in Array</DropdownMenuLabel>
                   <DropdownMenuItem>
-                    <button onClick={() => { resetArray(); setSearch(true); setInsert(false); setBinary(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-700">Traverse Array</button>
+                    <button onClick={() => { resetArray(); setSearch(true); setInsert(false); setBinary(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-700">Linear Search</button>
                   </DropdownMenuItem>
                   <DropdownMenuItem>
                     <button onClick={() => { setSearch(true); setInsert(false); setBinary(true); setarr(arr.sort((a, b) => a - b)); }} className="w-full text-left px-4 py-2 hover:bg-gray-700">Binary Search</button>
@@ -400,9 +435,9 @@ const MainPage = () => {
             <div className="border-2 border-white w-[50vw] h-[13vh] ml-[2.2vw] rounded-sm mt-[5vh] flex items-center">
               <p className="mx-2 text-xl">Enter Data</p>
               <input type="number" placeholder="Number Only" className="input input-bordered mt-1 mx-1 mb-1 text-black" id="arrayelement" name="value" />
-                  <p className="mx-2 text-xl">Enter Index</p>
-                  <input type="number" placeholder="Index" className="input input-bordered mt-1 mx-1 mb-1 text-black" id="arrayindex" name="index" />
-                  <button className="text-xl mx-2 bg-blue-600 rounded-sm p-2" onClick={insertAtIndex}>Insert</button>
+              <p className="mx-2 text-xl">Enter Index</p>
+              <input type="number" placeholder="Index" className="input input-bordered mt-1 mx-1 mb-1 text-black" id="arrayindex" name="index" />
+              <button className="text-xl mx-2 bg-blue-600 rounded-sm p-2" onClick={insertAtIndex}>Insert</button>
             </div>
           )}
           {isSearch && (
